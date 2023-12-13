@@ -1,0 +1,38 @@
+﻿2019-7-31:  完成全部整合。
+2019-9-29:  添加新程序1.02inch e-Paper Module程序。
+2019-10-8:  添加新程序7.5inch V2 e-Paper 和 7.5inch B V2 e-Paper程序。
+2019-10-11: 添加新功能2.7inch e-Paper 4灰度。
+2019-11-12: 添加新功能4.2inch e-Paper 局部刷新显示，局部刷新显示效果不佳，部分例程中未添加。
+2019-11-13: 添加新功能4.2inch e-Paper 4灰度。
+2020-01-04: 修改了Arduino例程，不需要移动到根目录，直接双击即可使用；
+2020-04-21: 添加新程序1.54inch B V2 e-Paper 例程。
+2020-04-22: 添加新程序2.13inch B V2 e-Paper 例程。
+2020-04-27：添加新程序7.5inch B HD e-Paper 例程。
+2020-04-28：添加新程序7.5inch HD e-Paper 例程。
+2020-05-21：2.13inch B V2 e-Paper更改为2.13inch B V3 e-Paper
+2020-07-03：添加新程序2.9inch B V2 e-Paper 例程。
+2020-07-18：添加新程序5.65inch e-Paper Module (F)例程。
+2020-07-30：添加新程序3.7inch e-Paper HAT例程。
+2020-07-30：添加新程序2.66inch e-Paper Module例程。
+2020-08-03：添加新程序5.83inch B V2 e-Paper例程。
+2020-11-23：更新1.54inch V2 e-Paper例程。
+2020-11-25：补充4.2inch B V2 e-Paper例程。
+2020-11-30：更新7.5inch B V2 e-Paper例程。
+2020-12-02：添加新程序2.66inch B e-Paper例程。
+2020-12-03：2.9inch B V2 e-Paper 改名为 2.9inch B V3 e-Paper。
+2020-12-09：添加新程序2.9inch V2 e-Paper例程。
+2020-12-09：添加新程序5.83inch V2 e-Paper例程。
+2020-12-25：添加新程序4.01inch e-Paper (F)例程。
+2021-02-22：添加新程序2.7inch B V2 e-Paper例程。
+2021-07-19：1.54V2、2.13V3、2.9V2、7.5V2程序均采用外部波形，并提升了刷新速度
+2021-11-01：添加新程序2.13inch V3 e-Paper例程。
+2022-04-26：添加新程序2.13inch B V4 e-Paper例程。
+2022-07-22：添加新程序1.64inch e-Paper (G)例程。
+2022-07-22：添加新程序3inch e-Paper (G)例程。
+2022-07-22：添加新程序7.3inch e-Paper (G)例程。
+2022-07-22：添加新程序3.52inch e-Paper例程。
+2022-08-16：添加新程序4.37inch e-Paper (G)例程。
+2022-08-17：添加新程序2.36inch e-Paper (G)例程。
+2022-10-22：添加新程序7.3inch e-Paper (F)例程。
+2022-10-27：添加新程序2.7inch V2 e-Paper 例程。
+2023-05-29：添加新程序2.13inch e-Paper  (G)例程。

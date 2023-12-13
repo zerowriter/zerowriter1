@@ -1,0 +1,4 @@
+Ok, this is a new cache.
+This is typing with the modified 
+variables. seems fine.
+Ok.Refactor it down.
