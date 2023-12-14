@@ -30,7 +30,7 @@ Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful unle
 ----------
 
 Setup / Getting Started
-- requires pi zero 2w running bullseye, light install recomend (headless/no GUI)
+- requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
 - set up ssh and configure your pi zero remotely via terminal or powershell
 - https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout and install instructions. You can use my e-Paper directory instead of theirs, but probably test with their code first
 - Drop in the e-Paper folder provided in this repo and run main.py from ssh
