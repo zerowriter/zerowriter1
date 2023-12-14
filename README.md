@@ -32,7 +32,7 @@ Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful unle
 Setup / Getting Started
 - requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
 - set up ssh and configure your pi zero remotely via terminal or powershell
-- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout and install instructions. You can use my e-Paper directory instead of theirs, but probably test with their code first
+- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for wiring pinout and install instructions. Get their code working first, follow their install steps, and then drop in the e-Paper directory from this repo.
 - Drop in the e-Paper folder provided in this repo and run main.py from ssh
 - install SMB or similar so you can access your files via SMB from another device
 - Set up crontab (from command line: crontab -e) to boot to main.py
