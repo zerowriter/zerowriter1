@@ -63,6 +63,7 @@ Crontab
 
 Current Issues / Requests / Going Further:
 - I'm not a programmer, so my code isn't very clean.. would be great to have someone revise it at some point.
+- Running multiple instances of the display driver will cause weird issues -- be sure to kill the main.py process or reboot regularly if you are tinkering
 - Due to the way pi zero power works, there is no standby, so zerowriter consumes considerable power when idle. maybe someone can think of a creative workaround here?
 - The display buffer code from waveshare requires a full buffer even for partial display updates. Writing a display buffer is beyond what I can do... this would have big implications for speed / refresh rate
 - If you want to save power, you could disable networking entirely, and cut other services. I don't find it worth the trouble as I use SSH so frequently 
