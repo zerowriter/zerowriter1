@@ -20,50 +20,45 @@ How it works:
 
 Inside the e-Paper directory, I built an application on top of the example code from waveshare. You can find it in e-Paper/RaspberryPiJetsonNano/python/examples main.py
 
-The application itself can be modified to do whatever you want. The basics:
+The application itself can be modified to do whatever you want (or just leave it be). The basics:
 
 epd.init() clears the screen using slow look up tables -- this prevents artifacting
 
 epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" waveshare display.
 
-An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates.
+An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates. Try playing with your overclocking settings to see if you get something that fits what you want to do.
 
-Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful unless you have a high tolerance for display latency.
+Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful.
 
 ----------
 
-Setup / Getting Started
-- requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
+Setup / Getting Started:
+
+https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
+
+- requires pi zero 2w running bookworm, light install recomend (headless/no GUI)
 - set up ssh and configure your pi zero remotely via terminal or powershell
-- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for wiring pinout and install instructions. Get their code working first, follow their install steps, and then drop in the e-Paper directory from this repo.
 - Drop in the e-Paper folder provided in this repo and run main.py from ssh
-- install SMB or similar so you can access your files via SMB from another device
 - Set up crontab (from command line: crontab -e) to boot to main.py
 
-Hardware Features
+Hardware Features:
 - 40% keyboard and an eink display
 - tons of storage
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
 
-Program Features
-- light weight python typewriter in 400 lines of code
+Program Features:
+- light weight python typewriter
 - works with any USB keyboard
-- KEYMAPS file  to edit key maps if you don't want to program your keyboard's firmware
-- files save in the /data directory where the program resides
+- KEYMAPS file to edit key maps if you don't want to program your keyboard's firmware
+- files save in the /data directory where the program resides, access via SMB
 - autosaves the cache every time return is pressed
 - CTRL S saves the cache to a txt file
 - CTRL N starts a new file
 - CTRL ESC turns unit off.
-- (NEW, likely buggy:) The arrow keys can be used to navigate through and review previous writing -- no editing.
-- google drive could be configured if you want, i removed it for simplicity
-
-Crontab
-  - this launches the typewriter on powerup
-  - install crontab
-  - at ssh commandline, type crontab -e and add this line at the bottom:
-  #@reboot cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
+- (NEW, likely buggy) The arrow keys can be used to navigate through and review previous writing
+- You could easily add an output to google drive or etc
 
 Current Issues / Requests / Going Further:
 - I'm not a programmer, so my code isn't very clean.. would be great to have someone revise it at some point.
