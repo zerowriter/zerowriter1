@@ -60,7 +60,7 @@ Crontab
   - this launches the typewriter on powerup
   - install crontab
   - at ssh commandline, type crontab -e and add this line at the bottom:
-  #@reboot cd e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
+  #@reboot cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
 
 Current Issues / Requests / Going Further:
 - I'm not a programmer, so my code isn't very clean.. would be great to have someone revise it at some point.
