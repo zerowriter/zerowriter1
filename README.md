@@ -1,7 +1,9 @@
 # zerowriter
 
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
+
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
+pi zerp setup steps: https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
 
 ----------
  
