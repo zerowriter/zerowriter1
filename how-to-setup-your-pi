@@ -14,7 +14,7 @@ https://www.raspberrypi.com/software/
 
 - Download and run the raspberry pi imager. This tool just formats your SD card to create the computer that runs the typewriter.
 
-- Use Debian Bookworm Lite 32bit -- the lite version skips some extra stuff the typewriter does not need.
+- Use Debian Bookworm Lite 32bit -- the lite version skips some extra stuff the typewriter does not need. (64-bit mightbe fine, haven't tested)
 
 - Use the gear icon to add extra settings to your install: 
 
@@ -43,7 +43,6 @@ Follow these commands in order to set up the pi zero with the stuff it needs to 
 - sudo apt install pip
 - sudo apt-get install python3-pil
 - sudo apt-get install python3-numpy
-
 - sudo pip3 install keyboard
 note: "if you get externally managed error:" sudo pip3 install keyboard --break-system-packages
 
@@ -82,17 +81,21 @@ You can and should adjust your Pi Zero's settings to get better performance.
 
 - at command line, type sudo nano /boot/config.txt
 - overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
+- GPU_freq seems to have the highest impact on reducing latency. arm_freq will help with the responsiveness as well. Lower these values to preserve battery life and reduce heat.
+- 64-bit installs might have difference performance threshholds
+- if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example)
 - here are my settings, add to the bottom of your file:
 
 #Overclock
-arm_freq=1350
-core_freq=535
-over_voltage=6
-gpu_freq=680
-sdram_freq=500
-sdram_schmoo=0x02000020
-sdram_over_voltage=2
-
+arm_freq=1200
+core_freq=525
+over_voltage=4
+gpu_freq=700
 #fastboot
 disable_splash=1
 boot_delay=0
+
+6. Install SMB for file access
+
+If you want to easily access your files from another computer, you should install SMB to your pi.
+https://pimylifeup.com/raspberry-pi-samba/
