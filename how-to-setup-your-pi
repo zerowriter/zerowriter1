@@ -52,7 +52,7 @@ note: "if you get externally managed error:" sudo pip3 install keyboard --break-
 Lastly, clone the code to your pi so you can run the typewriter:
 
 - sudo apt install git
-- git clone zerowriter1
+- git clone https://github.com/zerowriter/zerowriter1.git
 
 Navigate to the typewriter's directory and run it:
 
