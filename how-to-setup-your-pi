@@ -82,7 +82,7 @@ You can and should adjust your Pi Zero's settings to get better performance.
 - at command line, type sudo nano /boot/config.txt
 - overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
 - GPU_freq seems to have the highest impact on reducing latency. arm_freq will help with the responsiveness as well. Lower these values to preserve battery life and reduce heat.
-- 64-bit installs might have difference performance threshholds
+- 32-bit vs 64-bit installs might have difference performance threshholds
 - if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example)
 - here are my settings, add to the bottom of your file:
 
