@@ -14,7 +14,7 @@ https://www.raspberrypi.com/software/
 
 - Download and run the raspberry pi imager. This tool just formats your SD card to create the computer that runs the typewriter.
 
-- Use Debian Bookworm Lite 32bit -- the lite version skips some extra stuff the typewriter does not need. (64-bit mightbe fine, haven't tested)
+- Use Debian Bookworm Lite 64bit -- the lite version skips some extra stuff the typewriter does not need. (32-bit is also fine, has some minor performance impact)
 
 - Use the gear icon to add extra settings to your install: 
 
