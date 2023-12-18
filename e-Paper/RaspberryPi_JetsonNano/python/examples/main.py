@@ -379,7 +379,6 @@ needs_input_update = False
 #mainloop
 try:
     while True:
-        time.sleep(0)
         
         if exit_cleanup:
             break
@@ -393,7 +392,8 @@ try:
             #the screen enters a high refresh mode when there has been keyboard input
             if not updating_input_area and scrollindex==1:
                 update_input_area()
-            
+        time.sleep(0.05) #the sleep here seems to help the processor handle things, especially on 64-bit installs
+        
 except KeyboardInterrupt:
     pass
 
