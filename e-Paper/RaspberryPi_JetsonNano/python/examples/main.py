@@ -1,6 +1,9 @@
 #
 # ZeroWriter
 #
+# This code is open-source. Feel free to modify and redistribute as you want.
+# Participate on reddit in r/zerowriter if you want.
+#
 # Using the new4in2part library
 #
 # a python e-typewriter using eink and a USB keyboard
