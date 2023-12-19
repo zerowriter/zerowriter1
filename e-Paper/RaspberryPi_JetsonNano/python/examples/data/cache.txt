@@ -26,5 +26,12 @@ Y
 and Z.
 
 
-Tada.
+Welcome!
 Go ahead and write.
+
+Use the Arrow Keys to scroll
+to previous pages.
+
+CTRL N: New File
+CTRL S: Save File
+CTRL ESC: Power Down
