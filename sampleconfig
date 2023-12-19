@@ -47,14 +47,13 @@ otg_mode=1
 
 [all]
 
-arm_freq=1200
-gpu_freq=580
+arm_freq=1050
+gpu_freq=650
 core_freq=525
 sdram_freq=500
 sdram_schmoo=0x02000020
-over_voltage=6
+over_voltage=4
 over_voltage_sdram=2
-force_turbo=1
 
 #fastboot
 disable_splash=1
