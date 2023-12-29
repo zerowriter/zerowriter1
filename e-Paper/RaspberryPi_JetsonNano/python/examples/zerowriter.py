@@ -109,7 +109,7 @@ class ZeroWriter:
         
         if cursor_index <= len(self.input_content):
             # Insert character in the text_content string
-            self.input_content = self.input_content[:cursor_index] + character + input_content[cursor_index:]
+            self.input_content = self.input_content[:cursor_index] + character + self.input_content[cursor_index:]
             self.cursor_position += 1  # Move the cursor forward
         
         self.needs_input_update = True
