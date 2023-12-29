@@ -72,3 +72,20 @@ Current Issues / Requests / Going Further:
 - I'd like to keep this program simple and clean, so I want to avoid bloat... not interested in editing features, or even file managers and such. Maybe could change my mind on that.
 
 Enjoy! Have fun. Happy writing.
+
+===
+
+Steps to use a Bluetooth Keyboard
+
+1. Run `sudo bluetoothctl`
+2. Run `agent on`
+3. Run `default-agent`
+4. Run `scan on`
+5. Wait until you see your device listed (be sure your keyboard is in pairing mode)
+6. Run `scan off`
+7. Run `devices` to list known Bluetooth devices
+8. Run `pair AA:BB:CC:DD:EE:FF` where `AA:BB:CC:DD:EE:FF` is the MAC address of your bluetooth keyboard
+9. You may need to reboot your raspberry pi before python is able to register your bluetooth keyboard.
+
+https://www.youtube.com/watch?v=UEmSsscijKE has a video walkthrough of the above steps as well.
+
