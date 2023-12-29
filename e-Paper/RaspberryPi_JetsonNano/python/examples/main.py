@@ -26,6 +26,7 @@ from zerowriter import ZeroWriter, ZeroWriterConfig
 # Instantiate ZeroWriter with the default configuration
 zero_writer = ZeroWriter()
 zero_writer.epd = new4in2part.EPD()
+zero_writer.keyboard = keyboard
 zero_writer.initialize()
 
 # Initialize the e-Paper display

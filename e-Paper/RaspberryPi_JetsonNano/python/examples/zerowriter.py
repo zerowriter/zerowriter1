@@ -1,8 +1,13 @@
+import time
+import keymaps
+from PIL import Image, ImageDraw, ImageFont
+
 class ZeroWriter:
     def __init__(self):
         self.epd = None
         self.display_image = None
         self.display_draw = None
+        self.display_updating = False
         self.cursor_position = 0
         self.text_content = ""
         self.input_content = ""
@@ -13,12 +18,15 @@ class ZeroWriter:
         self.lines_on_screen = 12
         self.font_size = 18
         self.line_spacing = 22
+        self.scrollindex = 0
+        self.console_message = ""
+        self.updating_input_area = False
     
     def initialize(self):
         self.epd.init()
         self.epd.Clear()
-        self.display_image = Image.new('1', (epd.width,epd.height), 255)
-        self.display_draw = ImageDraw.Draw(display_image)
+        self.display_image = Image.new('1', (self.epd.width, self.epd.height), 255)
+        self.display_draw = ImageDraw.Draw(self.display_image)
         self.last_display_update = time.time()
 
     def load_previous_lines(self, file_path):
@@ -38,29 +46,31 @@ class ZeroWriter:
               file.write(line + '\n')
 
     def update_display(self):
+        self.display_updating = True
+
         # Clear the main display area -- also clears input line (270-300)
         self.display_draw.rectangle((0, 0, 400, 300), fill=255)
         
         # Display the previous lines
-        y_position = 270 - linespacing  # leaves room for cursor input
+        y_position = 270 - self.line_spacing  # leaves room for cursor input
 
         #Make a temp array from previous_lines. And then reverse it and display as usual.
-        current_line=max(0,len(previous_lines)-lines_on_screen*scrollindex)
-        temp=previous_lines[current_line:current_line+lines_on_screen]
+        current_line=max(0,len(self.previous_lines)-self.lines_on_screen*self.scrollindex)
+        temp=self.previous_lines[current_line:current_line+self.lines_on_screen]
         #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
-        for line in reversed(temp[-lines_on_screen:]):
+        for line in reversed(temp[-self.lines_on_screen:]):
           display_draw.text((10, y_position), line[:max_chars_per_line], font=font24, fill=0)
-          y_position -= linespacing
+          y_position -= self.line_spacing
 
         #Display Console Message
         if self.console_message != "":
             display_draw.rectangle((300, 270, 400, 300), fill=255)
-            display_draw.text((300, 270), console_message, font=font24, fill=0)
-            console_message = ""
+            display_draw.text((300, 270), self.console_message, font=font24, fill=0)
+            self.console_message = ""
         
         #generate display buffer for display
-        partial_buffer = self.epd.getbuffer(display_image)
+        partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display(partial_buffer)
 
         self.last_display_update = time.time()
@@ -79,7 +89,7 @@ class ZeroWriter:
         
         #generate display buffer for input line
         self.updating_input_area = True
-        partial_buffer = epd.getbuffer(display_image)
+        partial_buffer = epd.getbuffer(self.display_image)
         self.epd.display(partial_buffer)
         self.updating_input_area = False
 
@@ -120,7 +130,7 @@ class ZeroWriter:
                 last_space = input_content.rfind(' ', 0, chars_per_line)
                 sentence = input_content[:last_space]
                 # Append the sentence to the previous lines
-                previous_lines.append(sentence)                
+                self.previous_lines.append(sentence)                
 
                 # Update input_content to contain the remaining characters
                 self.input_content = input_content[last_space + 1:]
@@ -133,7 +143,7 @@ class ZeroWriter:
         self.needs_input_update = True
 
     def handle_interrupt(self, signal, frame):
-      keyboard.unhook_all()
+      self.keyboard.unhook_all()
       epd.init()
       epd.Clear()
       exit(0)
@@ -141,6 +151,9 @@ class ZeroWriter:
     def run(self):
         self.epd.init()
         self.epd.Clear()
+        self.keyboard.on_press(self.handle_key_down, suppress=False) #handles modifiers and shortcuts
+        self.keyboard.on_release(self.handle_key_press, suppress=True)
+
         while True:
             if self.needs_display_update and not self.display_updating:
                 self.update_display()
