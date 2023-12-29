@@ -194,7 +194,9 @@ class ZeroWriter:
             
             self.needs_display_update = True
             self.needs_input_update = True
-            
+        
+        if e.name == "r" and self.control_active: #ctrl+r
+            self.update_display()
             
         if e.name == "tab": 
             #just using two spaces for tab, kind of cheating, whatever.
