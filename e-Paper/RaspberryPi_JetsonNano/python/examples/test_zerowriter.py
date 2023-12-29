@@ -11,4 +11,7 @@ zero_writer = ZeroWriter()
 zero_writer.epd = MockEPD(400, 300)
 zero_writer.keyboard = MockKeyboard()
 zero_writer.initialize()
-zero_writer.run()
+zero_writer.loop()
+
+zero_writer.keyboard.simulate_key_press(dict(name='a'))
+zero_writer.loop()

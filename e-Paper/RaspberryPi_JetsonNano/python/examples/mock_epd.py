@@ -1,3 +1,5 @@
+from PIL import Image, ImageDraw, ImageFont
+
 class MockEPD:
     def __init__(self, width, height):
         self.width = width
@@ -12,12 +14,16 @@ class MockEPD:
 
     def Clear(self):
         self.is_cleared = True
+        # Create a white image to represent the cleared state
+        self.displayed_image = Image.new('1', (self.width, self.height), 255)
 
     def sleep(self):
         self.is_sleeping = True
 
     def display(self, image):
-        self.displayed_image = image
+        # Convert the bytes data back to a PIL image and show it
+        self.displayed_image = Image.frombytes('1', (self.width, self.height), image)
+        self.displayed_image.show()
 
     def getbuffer(self, image):
         return image.tobytes()

@@ -29,6 +29,9 @@ class ZeroWriter:
         self.display_draw = ImageDraw.Draw(self.display_image)
         self.last_display_update = time.time()
 
+        self.keyboard.on_press(self.handle_key_down, suppress=False) #handles modifiers and shortcuts
+        self.keyboard.on_release(self.handle_key_press, suppress=True)
+
     def load_previous_lines(self, file_path):
         try:
             with open(file_path, 'r') as file:
@@ -148,19 +151,21 @@ class ZeroWriter:
       epd.Clear()
       exit(0)
 
-    def run(self):
-        self.epd.init()
-        self.epd.Clear()
-        self.keyboard.on_press(self.handle_key_down, suppress=False) #handles modifiers and shortcuts
-        self.keyboard.on_release(self.handle_key_press, suppress=True)
+    def loop(self):
+        if self.needs_display_update and not self.display_updating:
+            print("updating display")
+            self.update_display()
+            self.needs_diplay_update=False
+            self.typing_last_time = time.time()
+            
+        elif (time.time()-self.typing_last_time)<(.5): #if not doing a full refresh, do partials
+            print("updating display partial")
+            #the screen enters a high refresh mode when there has been keyboard input
+            if not self.updating_input_area and self.scrollindex==1:
+                self.update_input_area()
+        else:
+            print("nop")
 
+    def run(self):
         while True:
-            if self.needs_display_update and not self.display_updating:
-                self.update_display()
-                self.needs_diplay_update=False
-                self.typing_last_time = time.time()
-                
-            elif (time.time()-self.typing_last_time)<(.5): #if not doing a full refresh, do partials
-                #the screen enters a high refresh mode when there has been keyboard input
-                if not self.updating_input_area and self.scrollindex==1:
-                    self.update_input_area()
+            self.loop()
