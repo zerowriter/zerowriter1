@@ -21,6 +21,8 @@ class ZeroWriter:
         self.scrollindex = 0
         self.console_message = ""
         self.updating_input_area = False
+        self.control_active = False
+        self.shift_active = False
     
     def initialize(self):
         self.epd.init()
@@ -117,13 +119,14 @@ class ZeroWriter:
             self.control_active = True
 
     def handle_key_press(self, e):
-        if len(e.name) == 1 and control_active == False:  # letter and number input
-            if shift_active:
+        print("handle key press")
+        if len(e.name) == 1 and self.control_active == False:  # letter and number input
+            if self.shift_active:
                 char = keymaps.shift_mapping.get(e.name)
                 self.input_content += char
             else:
                 self.input_content += e.name
-                
+
             self.cursor_position += 1
             self.needs_input_update = True
 
@@ -140,7 +143,7 @@ class ZeroWriter:
                 self.needs_display_update=True
                 
             # Update cursor_position to the length of the remaining input_content
-            self.cursor_position = len(input_content)                
+            self.cursor_position = len(self.input_content)                
 
         self.typing_last_time = time.time()
         self.needs_input_update = True

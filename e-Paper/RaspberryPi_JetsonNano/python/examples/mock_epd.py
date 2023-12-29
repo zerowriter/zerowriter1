@@ -23,7 +23,7 @@ class MockEPD:
     def display(self, image):
         # Convert the bytes data back to a PIL image and show it
         self.displayed_image = Image.frombytes('1', (self.width, self.height), image)
-        self.displayed_image.show()
+        self.displayed_image.show('mock_display_output.png')
 
     def getbuffer(self, image):
         return image.tobytes()
