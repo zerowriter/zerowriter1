@@ -2,6 +2,8 @@ import time
 import keymaps
 from PIL import Image, ImageDraw, ImageFont
 
+font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
+
 class ZeroWriter:
     def __init__(self):
         self.epd = None
@@ -18,7 +20,7 @@ class ZeroWriter:
         self.lines_on_screen = 12
         self.font_size = 18
         self.line_spacing = 22
-        self.scrollindex = 0
+        self.scrollindex = 1
         self.console_message = ""
         self.updating_input_area = False
         self.control_active = False
@@ -62,10 +64,10 @@ class ZeroWriter:
         #Make a temp array from previous_lines. And then reverse it and display as usual.
         current_line=max(0,len(self.previous_lines)-self.lines_on_screen*self.scrollindex)
         temp=self.previous_lines[current_line:current_line+self.lines_on_screen]
-        #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
+        # print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
         for line in reversed(temp[-self.lines_on_screen:]):
-          display_draw.text((10, y_position), line[:max_chars_per_line], font=font24, fill=0)
+          self.display_draw.text((10, y_position), line[:self.chars_per_line], font=font24, fill=0)
           y_position -= self.line_spacing
 
         #Display Console Message
@@ -87,14 +89,14 @@ class ZeroWriter:
         self.display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display
         
         #add cursor
-        temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
-        
+        temp_content = self.input_content[:cursor_index] + "|" + self.input_content[cursor_index:]
+
         #draw input line text
         self.display_draw.text((10, 270), str(temp_content), font=font24, fill=0)
         
         #generate display buffer for input line
         self.updating_input_area = True
-        partial_buffer = epd.getbuffer(self.display_image)
+        partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display(partial_buffer)
         self.updating_input_area = False
 
@@ -119,7 +121,6 @@ class ZeroWriter:
             self.control_active = True
 
     def handle_key_press(self, e):
-        print("handle key press")
         if len(e.name) == 1 and self.control_active == False:  # letter and number input
             if self.shift_active:
                 char = keymaps.shift_mapping.get(e.name)
@@ -133,13 +134,13 @@ class ZeroWriter:
             # Check if adding the character exceeds the line length limit
             if self.cursor_position > self.chars_per_line:
                 # Find the last space character before the line length limit
-                last_space = input_content.rfind(' ', 0, chars_per_line)
-                sentence = input_content[:last_space]
+                last_space = self.input_content.rfind(' ', 0, self.chars_per_line)
+                sentence = self.input_content[:last_space]
                 # Append the sentence to the previous lines
                 self.previous_lines.append(sentence)                
 
                 # Update input_content to contain the remaining characters
-                self.input_content = input_content[last_space + 1:]
+                self.input_content = self.input_content[last_space + 1:]
                 self.needs_display_update=True
                 
             # Update cursor_position to the length of the remaining input_content
@@ -158,6 +159,7 @@ class ZeroWriter:
         if self.needs_display_update and not self.display_updating:
             print("updating display")
             self.update_display()
+            self.update_input_area()
             self.needs_diplay_update=False
             self.typing_last_time = time.time()
             
