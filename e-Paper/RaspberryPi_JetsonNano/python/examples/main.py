@@ -20,7 +20,7 @@ import keymaps
 from PIL import Image, ImageDraw, ImageFont
 from waveshare_epd import epd4in2_V2
 
-from zerowriter import ZeroWriter, ZeroWriterConfig
+from zerowriter import ZeroWriter
 
 
 # Instantiate ZeroWriter with the default configuration
