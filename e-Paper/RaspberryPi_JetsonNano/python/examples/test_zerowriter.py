@@ -20,6 +20,6 @@ zero_writer.loop()
 for letter in list("this is some test text that we can use to test the zerowriter. it should be long enough to wrap around the screen."):
     zero_writer.keyboard.simulate_key_release(MockKeyEvent(letter))
 
-time.sleep(2)
-
 zero_writer.loop()
+
+time.sleep(2)
