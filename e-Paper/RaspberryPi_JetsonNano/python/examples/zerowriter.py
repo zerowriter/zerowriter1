@@ -27,7 +27,6 @@ class ZeroWriter:
         self.control_active = False
         self.shift_active = False
         
-        # file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
         self.file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
     
     def initialize(self):
@@ -51,10 +50,20 @@ class ZeroWriter:
             return []
 
     def save_previous_lines(self, file_path, lines):
-      print("attempting save")
-      with open(self.file_path, 'w') as file:
-          for line in lines:
-              file.write(line + '\n')
+      try:
+          # Ensure the directory exists
+          os.makedirs(os.path.dirname(file_path), exist_ok=True)
+          # Check if the file is writable or create it if it doesn't exist
+          with open(file_path, 'a') as file:
+              pass
+          # Clear the file content before writing
+          with open(file_path, 'w') as file:
+              print("Saving to file:", file_path)
+              for line in lines:
+                  file.write(line + '\n')
+      except IOError as e:
+          self.console_message = f"[Error saving file]"
+          print("Failed to save file:", e)
 
     def update_display(self):
         self.display_updating = True
