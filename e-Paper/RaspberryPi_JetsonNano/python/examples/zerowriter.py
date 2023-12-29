@@ -70,8 +70,10 @@ class ZeroWriter:
         print("displaying qr code")
         
         # Combine all previous lines into a single string
-        qr_data = 'mailto:example@example.com?body=' + '\n'.join(self.previous_lines)
+        qr_data = 'mailto:example@example.com?body=' + ' '.join(self.previous_lines)
         # Generate QR code
+        # giving it no version will allow it to auto-detect the smallest version that will fit the data
+        # currently does not handle extremely large files
         qr = qrcode.QRCode(
             error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=2,
