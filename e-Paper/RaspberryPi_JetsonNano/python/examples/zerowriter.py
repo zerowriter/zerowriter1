@@ -168,8 +168,6 @@ class ZeroWriter:
             #the screen enters a high refresh mode when there has been keyboard input
             if not self.updating_input_area and self.scrollindex==1:
                 self.update_input_area()
-        else:
-            # nop, not doing anything
 
     def run(self):
         while True:
