@@ -169,7 +169,7 @@ class ZeroWriter:
             if not self.updating_input_area and self.scrollindex==1:
                 self.update_input_area()
         else:
-          # nop, not doing anything
+            # nop, not doing anything
 
     def run(self):
         while True:
