@@ -1,6 +1,7 @@
 import time
 import keymaps
 from PIL import Image, ImageDraw, ImageFont
+import os
 
 font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
 
@@ -25,6 +26,9 @@ class ZeroWriter:
         self.updating_input_area = False
         self.control_active = False
         self.shift_active = False
+        
+        # file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
+        self.file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
     
     def initialize(self):
         self.epd.init()
@@ -38,8 +42,8 @@ class ZeroWriter:
 
     def load_previous_lines(self, file_path):
         try:
-            with open(file_path, 'r') as file:
-                print(file_path)
+            with open(self.file_path, 'r') as file:
+                print(self.file_path)
                 lines = file.readlines()
                 return [line.strip() for line in lines]
         except FileNotFoundError:
@@ -48,7 +52,7 @@ class ZeroWriter:
 
     def save_previous_lines(self, file_path, lines):
       print("attempting save")
-      with open(file_path, 'w') as file:
+      with open(self.file_path, 'w') as file:
           for line in lines:
               file.write(line + '\n')
 
@@ -72,8 +76,8 @@ class ZeroWriter:
 
         #Display Console Message
         if self.console_message != "":
-            display_draw.rectangle((300, 270, 400, 300), fill=255)
-            display_draw.text((300, 270), self.console_message, font=font24, fill=0)
+            self.display_draw.rectangle((300, 270, 400, 300), fill=255)
+            self.display_draw.text((300, 270), self.console_message, font=font24, fill=0)
             self.console_message = ""
         
         #generate display buffer for display
@@ -121,6 +125,121 @@ class ZeroWriter:
             self.control_active = True
 
     def handle_key_press(self, e):
+        if e.name== "s" and self.control_active:
+            timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
+            filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}.txt')
+            self.save_previous_lines(filename, self.previous_lines)
+            
+            self.console_message = f"[Saved]"
+            self.update_display()
+            time.sleep(1)
+            self.console_message = ""
+            self.update_display()
+
+        #new file (clear) via ctrl + n
+        if e.name== "n" and self.control_active: #ctrl+n
+            #save the cache first
+            timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
+            filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}.txt')
+            self.save_previous_lines(filename, self.previous_lines)
+            
+            #create a blank doc
+            self.previous_lines.clear()
+            self.input_content = ""
+
+            self.console_message = f"[New]"
+            self.update_display()
+            time.sleep(1)
+            self.console_message = ""
+            self.update_display()
+
+        if e.name== "down" or e.name== "right":
+          #move scrollindex down
+          self.scrollindex = self.scrollindex - 1
+          if self.scrollindex < 1:
+                self.scrollindex = 1
+          
+          self.console_message = (f'[{round(len(self.previous_lines)/self.lines_on_screen)-self.scrollindex+1}/{round(len(self.previous_lines)/self.lines_on_screen)}]')
+          self.update_display()
+          self.console_message = ""
+
+        if e.name== "up" or e.name== "left":
+          #move scrollindex up
+          self.scrollindex = self.scrollindex + 1
+          if self.scrollindex > round(len(self.previous_lines)/self.lines_on_screen+1):
+                self.scrollindex = round(len(self.previous_lines)/self.lines_on_screen+1)
+          
+          self.console_message = (f'[{round(len(self.previous_lines)/self.lines_on_screen)-self.scrollindex+1}/{round(len(self.previous_lines)/self.lines_on_screen)}]')
+          self.update_display()
+          self.console_message = ""
+
+        #powerdown - could add an autosleep if you want to save battery
+        if e.name == "esc" and self.control_active: #ctrl+esc
+            #run powerdown script
+            self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
+            self.display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
+            partial_buffer = self.epd.getbuffer(display_image)
+            self.epd.display(partial_buffer)
+            time.sleep(3)
+            subprocess.run(['sudo', 'poweroff', '-f'])
+            
+            self.needs_display_update = True
+            self.needs_input_update = True
+            
+            
+        if e.name == "tab": 
+            #just using two spaces for tab, kind of cheating, whatever.
+            self.insert_character(" ")
+            self.insert_character(" ")
+            
+            # Check if adding the character exceeds the line length limit
+            if self.cursor_position > self.chars_per_line:
+                self.previous_lines.append(self.input_content)                
+                # Update input_content to contain the remaining characters
+                self.input_content = ""
+                self.needs_display_update = True #trigger a display refresh
+            # Update cursor_position to the length of the remaining input_content
+            self.cursor_position = len(self.input_content)
+            
+            self.needs_input_update = True
+            
+        if e.name == "backspace":
+            self.delete_character()
+            self.needs_input_update = True
+                
+        elif e.name == "space": #space bar
+            self.insert_character(" ")
+            
+            # Check if adding the character exceeds the line length limit
+            if self.cursor_position > self.chars_per_line:
+                self.previous_lines.append(self.input_content)                
+                self.input_content = ""
+                self.needs_display_update = True
+            # Update cursor_position to the length of the remaining input_content
+            self.cursor_position = len(self.input_content)
+            
+            self.needs_input_update = True
+        
+        elif e.name == "enter":
+            if self.scrollindex>1:
+                #if you were reviewing text, jump to scrollindex=1
+                self.scrollindex = 1
+                self.update_display()
+            else:
+                # Add the input to the previous_lines array
+                self.previous_lines.append(self.input_content)
+                self.input_content = "" #clears input content
+                self.cursor_position=0
+                #save the file when enter is pressed
+                self.save_previous_lines(self.file_path, self.previous_lines)
+                self.needs_display_update = True
+            
+        if e.name == 'ctrl': #if control is released
+            self.control_active = False 
+
+        if e.name == 'shift': #if shift is released
+            self.shift_active = False
+
         if len(e.name) == 1 and self.control_active == False:  # letter and number input
             if self.shift_active:
                 char = keymaps.shift_mapping.get(e.name)
