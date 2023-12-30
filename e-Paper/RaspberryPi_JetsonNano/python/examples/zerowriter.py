@@ -6,6 +6,43 @@ import os
 
 font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
 
+class Menu:
+    def __init__(self, display_draw, epd, display_image):
+        self.display_draw = display_draw
+        self.epd = epd
+        self.display_image = display_image
+        self.menu_items = []
+        self.selected_item = 0
+    
+    def addItem(self, text, action):
+        self.menu_items.append({'text': text, 'action': action})
+
+    def up(self):
+        self.selected_item -= 1
+        if self.selected_item < 0:
+            self.selected_item = len(self.menu_items) - 1
+        self.display()
+    
+    def down(self):
+        self.selected_item += 1
+        if self.selected_item > len(self.menu_items) - 1:
+            self.selected_item = 0
+        self.display()
+
+    def select(self):
+        self.menu_items[self.selected_item]['action']()
+
+    def display(self):
+        self.display_draw.rectangle((0, 0, 400, 300), fill=255)
+        y_position = 10
+        for index, item in enumerate(self.menu_items):
+            prefix = self.selected_item == index and "> " or "  "
+            self.display_draw.text((10, y_position), prefix + item['text'], font=font24, fill=0)
+            y_position += 30
+        partial_buffer = self.epd.getbuffer(self.display_image)
+        self.epd.display(partial_buffer)
+
+
 class ZeroWriter:
     def __init__(self):
         self.epd = None
@@ -27,6 +64,8 @@ class ZeroWriter:
         self.updating_input_area = False
         self.control_active = False
         self.shift_active = False
+        self.menu_mode = False
+        self.menu = None
         
         self.file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
     
@@ -39,6 +78,13 @@ class ZeroWriter:
 
         self.keyboard.on_press(self.handle_key_down, suppress=False) #handles modifiers and shortcuts
         self.keyboard.on_release(self.handle_key_press, suppress=True)
+      
+        self.menu = Menu(self.display_draw, self.epd, self.display_image)
+        self.menu.addItem("New", lambda: print("implement new file"))
+        self.menu.addItem("Save", lambda: print("implement save"))
+        self.menu.addItem("QR Code", self.display_qr_code)
+        self.menu.addItem("Power Off", lambda: print("implement power off"))
+        self.menu.addItem("Exit", self.hide_menu)
 
     def load_previous_lines(self, file_path):
         try:
@@ -65,6 +111,21 @@ class ZeroWriter:
       except IOError as e:
           self.console_message = f"[Error saving file]"
           print("Failed to save file:", e)
+
+    def hide_menu(self):
+      print('hiding menu')
+      self.menu_mode = False
+      self.update_display()
+
+    def show_menu(self):
+      self.menu_mode = True
+      self.menu.display()
+
+    def menu_up(self):
+      self.menu.up()
+    
+    def menu_down(self):
+      self.menu.down()
 
     def display_qr_code(self):
         print("displaying qr code")
@@ -182,6 +243,9 @@ class ZeroWriter:
             time.sleep(1)
             self.console_message = ""
             self.update_display()
+        
+        if e.name == "m" and self.control_active: #ctrl+m
+            self.show_menu()
 
         #new file (clear) via ctrl + n
         if e.name== "n" and self.control_active: #ctrl+n
@@ -201,6 +265,10 @@ class ZeroWriter:
             self.update_display()
 
         if e.name== "down" or e.name== "right":
+          if (self.menu_mode):
+            self.menu_down()
+            return
+
           #move scrollindex down
           self.scrollindex = self.scrollindex - 1
           if self.scrollindex < 1:
@@ -211,6 +279,10 @@ class ZeroWriter:
           self.console_message = ""
 
         if e.name== "up" or e.name== "left":
+          if (self.menu_mode):
+            self.menu_up()
+            return
+
           #move scrollindex up
           self.scrollindex = self.scrollindex + 1
           if self.scrollindex > round(len(self.previous_lines)/self.lines_on_screen+1):
@@ -272,6 +344,10 @@ class ZeroWriter:
             self.needs_input_update = True
         
         elif e.name == "enter":
+            if (self.menu_mode):
+                self.menu.select()
+                return
+
             if self.scrollindex>1:
                 #if you were reviewing text, jump to scrollindex=1
                 self.scrollindex = 1
