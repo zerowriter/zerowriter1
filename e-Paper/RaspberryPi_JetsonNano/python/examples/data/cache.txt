@@ -1,10 +1,37 @@
-this is some test text that we
-can use to test the zerowriter.
-it should be long enough to
-wrap around the screen.
-lorem ipsum dolor sit amet,
-consectetur adipiscing elit.
-sed non risus. suspendisse
-lectus tortor, dignissim sit
-amet, adipiscing nec, ultricies
-sed, dolor.
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+and Z.
+
+
+Welcome!
+Go ahead and write.
+
+Use the Arrow Keys to scroll
+to previous pages.
+
+CTRL N: New File
+CTRL S: Save File
+CTRL ESC: Power Down
