@@ -67,6 +67,7 @@ class ZeroWriter:
         self.shift_active = False
         self.menu_mode = False
         self.menu = None
+        self.parent_menu = None # used to store the menu that was open before the load menu was opened
         
         self.cache_file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
     
@@ -81,12 +82,70 @@ class ZeroWriter:
         self.keyboard.on_release(self.handle_key_press, suppress=True)
       
         self.menu = Menu(self.display_draw, self.epd, self.display_image)
-        self.menu.addItem("New", lambda: self.new_file)
+        self.menu.addItem("New", lambda: self.new_file())
+        self.menu.addItem("Load", lambda: self.show_load_menu())
         self.menu.addItem("Save", lambda: print("implement save"))
         self.menu.addItem("QR Code", self.display_qr_code)
         self.menu.addItem("Power Off", self.power_down)
         self.menu.addItem("Update ZeroWriter", self.update_zerowriter)
         self.menu.addItem("Exit", self.hide_menu)
+
+        self.load_menu = Menu(self.display_draw, self.epd, self.display_image)
+        self.populate_load_menu()
+
+    def show_load_menu(self):
+        self.parent_menu = self.menu
+        self.populate_load_menu()
+
+        self.menu = self.load_menu
+        self.menu.display()
+
+    def hide_child_menu(self):
+        self.menu = self.parent_menu
+        self.menu.display()
+
+    def populate_load_menu(self):
+        self.load_menu.menu_items.clear()
+        data_folder_path = os.path.join(os.path.dirname(__file__), 'data')
+        try:
+            # List all files in the data folder
+            files = [f for f in os.listdir(data_folder_path) if os.path.isfile(os.path.join(data_folder_path, f))]
+            # Sort files by modification time
+            files.sort(key=lambda x: os.path.getmtime(os.path.join(data_folder_path, x)), reverse=True)
+
+            self.load_menu.addItem("Back", self.hide_child_menu)
+
+            # Add each file to the load menu
+            for filename in files:
+                self.load_menu.addItem(filename, lambda f=filename: self.load_file_into_previous_lines(f))
+        except Exception as e:
+            print(f"Failed to list files in {data_folder_path}: {e}")
+
+    def load_file_into_previous_lines(self, filename):
+        file_path = os.path.join(os.path.dirname(__file__), 'data', filename)
+        try:
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+                self.previous_lines = [line.strip() for line in lines]
+                self.input_content = ""
+                self.cursor_position = 0
+                self.console_message = f"[Loaded {filename}]"
+                self.update_display()
+                time.sleep(1)
+                self.console_message = ""
+                self.update_display()
+        except Exception as e:
+            self.console_message = f"[Error loading file]"
+            print(f"Failed to load file {file_path}: {e}")
+            self.update_display()
+            time.sleep(1)
+            self.console_message = ""
+            self.update_display()
+        finally:
+            self.menu = self.parent_menu
+            self.hide_menu()
+
+
 
     def new_file(self):
         #save the cache first
@@ -108,7 +167,7 @@ class ZeroWriter:
         #run powerdown script
         self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
         self.display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
-        partial_buffer = self.epd.getbuffer(display_image)
+        partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display(partial_buffer)
         time.sleep(3)
         subprocess.run(['sudo', 'poweroff', '-f'])

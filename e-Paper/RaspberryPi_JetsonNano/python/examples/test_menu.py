@@ -30,6 +30,16 @@ zero_writer.keyboard.simulate_key_release(MockKeyEvent('ctrl'))
 time.sleep(0.5)
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))
 time.sleep(0.5)
+
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('enter'))
+time.sleep(1)
+
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))
+time.sleep(0.5)
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('enter'))
+
+time.sleep(3)
+
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))
 time.sleep(0.5)
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))

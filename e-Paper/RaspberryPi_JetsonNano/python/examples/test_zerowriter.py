@@ -58,11 +58,11 @@ zero_writer.loop()
 
 time.sleep(2)
 
-zero_writer.keyboard.simulate_key_press(MockKeyEvent('ctrl'))
-zero_writer.keyboard.simulate_key_release(MockKeyEvent('q'))
-zero_writer.keyboard.simulate_key_release(MockKeyEvent('ctrl'))
+# zero_writer.keyboard.simulate_key_press(MockKeyEvent('ctrl'))
+# zero_writer.keyboard.simulate_key_release(MockKeyEvent('q'))
+# zero_writer.keyboard.simulate_key_release(MockKeyEvent('ctrl'))
 
-time.sleep(15)
+# time.sleep(15)
 
 
 write_line("about to test pagination")
