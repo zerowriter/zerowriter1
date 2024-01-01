@@ -1,1 +1,10 @@
-
+this is some test text that we
+can use to test the zerowriter.
+it should be long enough to
+wrap around the screen.
+lorem ipsum dolor sit amet,
+consectetur adipiscing elit.
+sed non risus. suspendisse
+lectus tortor, dignissim sit
+amet, adipiscing nec, ultricies
+sed, dolor.

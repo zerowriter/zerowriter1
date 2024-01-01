@@ -3,6 +3,7 @@ import keymaps
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
 import os
+import subprocess
 
 font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
 
@@ -80,17 +81,50 @@ class ZeroWriter:
         self.keyboard.on_release(self.handle_key_press, suppress=True)
       
         self.menu = Menu(self.display_draw, self.epd, self.display_image)
-        self.menu.addItem("New", lambda: print("implement new file"))
+        self.menu.addItem("New", lambda: self.new_file)
         self.menu.addItem("Save", lambda: print("implement save"))
         self.menu.addItem("QR Code", self.display_qr_code)
-        self.menu.addItem("Power Off", lambda: print("implement power off"))
+        self.menu.addItem("Power Off", self.power_down)
         self.menu.addItem("Update ZeroWriter", self.update_zerowriter)
         self.menu.addItem("Exit", self.hide_menu)
 
+    def new_file(self):
+        #save the cache first
+        timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
+        filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}.txt')
+        self.save_previous_lines(filename, self.previous_lines)
+        
+        #create a blank doc
+        self.previous_lines.clear()
+        self.input_content = ""
+
+        self.console_message = f"[New]"
+        self.update_display()
+        time.sleep(1)
+        self.console_message = ""
+        self.update_display()
+
+    def power_down(self):
+        #run powerdown script
+        self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
+        self.display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
+        partial_buffer = self.epd.getbuffer(display_image)
+        self.epd.display(partial_buffer)
+        time.sleep(3)
+        subprocess.run(['sudo', 'poweroff', '-f'])
+        
+        self.needs_display_update = True
+        self.needs_input_update = True
+
     def update_zerowriter(self):
         print("updating zerowriter")
+        self.console_message = f"[Updating]"
+        self.update_display()
+
         completed_process = subprocess.run(['git', 'pull'])
         if completed_process.returncode != 0:
+            print(completed_process.stdout)
+            print(completed_process.stderr)
             self.console_message = f"[Error updating]"
             self.update_display()
             time.sleep(1)
@@ -271,20 +305,7 @@ class ZeroWriter:
 
         #new file (clear) via ctrl + n
         if e.name== "n" and self.control_active: #ctrl+n
-            #save the cache first
-            timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
-            filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}.txt')
-            self.save_previous_lines(filename, self.previous_lines)
-            
-            #create a blank doc
-            self.previous_lines.clear()
-            self.input_content = ""
-
-            self.console_message = f"[New]"
-            self.update_display()
-            time.sleep(1)
-            self.console_message = ""
-            self.update_display()
+            self.new_file()
 
         if e.name== "down" or e.name== "right":
           if (self.menu_mode):
@@ -316,16 +337,7 @@ class ZeroWriter:
 
         #powerdown - could add an autosleep if you want to save battery
         if e.name == "esc" and self.control_active: #ctrl+esc
-            #run powerdown script
-            self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
-            self.display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
-            partial_buffer = self.epd.getbuffer(display_image)
-            self.epd.display(partial_buffer)
-            time.sleep(3)
-            subprocess.run(['sudo', 'poweroff', '-f'])
-            
-            self.needs_display_update = True
-            self.needs_input_update = True
+            self.power_down()
         
         if e.name == "r" and self.control_active: #ctrl+r
             self.update_display()
