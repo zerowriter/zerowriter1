@@ -279,8 +279,11 @@ class ZeroWriter:
         self.needs_input_update = True
 
     def delete_character(self):
-        # Method to delete a character at the cursor position
-        pass
+        if self.cursor_position > 0:
+            # Remove the character at the cursor position
+            self.input_content = self.input_content[:self.cursor_position - 1] + self.input_content[self.cursor_position:]
+            self.cursor_position -= 1  # Move the cursor back
+            self.needs_input_update = True
 
     def handle_key_down(self, e):
         if e.name == 'shift': #if shift is released
@@ -366,6 +369,7 @@ class ZeroWriter:
             self.needs_input_update = True
             
         if e.name == "backspace":
+            print('backspace')
             self.delete_character()
             self.needs_input_update = True
                 

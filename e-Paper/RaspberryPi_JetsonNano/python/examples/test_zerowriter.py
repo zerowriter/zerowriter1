@@ -40,8 +40,21 @@ write_line("lorem ipsum dolor sit amet, consectetur adipiscing elit. sed non ris
 
 time.sleep(2)
 
-zero_writer.keyboard.simulate_key_press(MockKeyEvent('ctrl'))
-zero_writer.keyboard.simulate_key_release(MockKeyEvent('s'))
+for letter in "abcdefghijklmnopqrstuvwzyz": 
+  zero_writer.keyboard.simulate_key_release(MockKeyEvent(letter))
+  zero_writer.loop()
+
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('backspace'))
+zero_writer.loop()
 
 time.sleep(2)
 
