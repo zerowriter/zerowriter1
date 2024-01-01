@@ -28,16 +28,23 @@ zero_writer.keyboard.simulate_key_release(MockKeyEvent('m'))
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('ctrl'))
 
 time.sleep(0.5)
+
+# go to load
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))
 time.sleep(0.5)
 
+# enter load
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('enter'))
 time.sleep(1)
 
+# go to first file
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))
 time.sleep(0.5)
+
+# load file
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('enter'))
 
+# visually make sure it's loaded
 time.sleep(3)
 
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('down'))

@@ -109,7 +109,7 @@ class ZeroWriter:
         data_folder_path = os.path.join(os.path.dirname(__file__), 'data')
         try:
             # List all files in the data folder
-            files = [f for f in os.listdir(data_folder_path) if os.path.isfile(os.path.join(data_folder_path, f))]
+            files = [f for f in os.listdir(data_folder_path) if os.path.isfile(os.path.join(data_folder_path, f)) and f.endswith('.txt')]
             # Sort files by modification time
             files.sort(key=lambda x: os.path.getmtime(os.path.join(data_folder_path, x)), reverse=True)
 
