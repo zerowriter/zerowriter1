@@ -84,7 +84,29 @@ class ZeroWriter:
         self.menu.addItem("Save", lambda: print("implement save"))
         self.menu.addItem("QR Code", self.display_qr_code)
         self.menu.addItem("Power Off", lambda: print("implement power off"))
+        self.menu.addItem("Update ZeroWriter", self.update_zerowriter)
         self.menu.addItem("Exit", self.hide_menu)
+
+    def update_zerowriter(self):
+        print("updating zerowriter")
+        completed_process = subprocess.run(['git', 'pull'])
+        if completed_process.returncode != 0:
+            self.console_message = f"[Error updating]"
+            self.update_display()
+            time.sleep(1)
+            self.console_message = ""
+            self.update_display()
+            return
+        self.console_message = f"[Updated]"
+        self.update_display()
+        time.sleep(1)
+        self.console_message = "Rebooting"
+        self.update_display()
+        self.reboot()
+
+    def reboot(self):
+        print("rebooting")
+        subprocess.run(['sudo', 'reboot', '-f'])
 
     def load_previous_lines(self, file_path):
         try:
