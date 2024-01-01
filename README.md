@@ -4,6 +4,8 @@ An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginne
 
 This project is open-source. Do whatever you want with it. Please note the display drivers and waveshare code belongs to them. But buy their displays, they rock.
 
+Credit to: https://penkesu.computer/ for the original project that inspired this.
+
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
 
 pi zero setup steps: https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
