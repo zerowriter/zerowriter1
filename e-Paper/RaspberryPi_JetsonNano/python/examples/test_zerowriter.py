@@ -41,6 +41,11 @@ write_line("lorem ipsum dolor sit amet, consectetur adipiscing elit. sed non ris
 time.sleep(2)
 
 zero_writer.keyboard.simulate_key_press(MockKeyEvent('ctrl'))
+zero_writer.keyboard.simulate_key_release(MockKeyEvent('s'))
+
+time.sleep(2)
+
+zero_writer.keyboard.simulate_key_press(MockKeyEvent('ctrl'))
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('q'))
 zero_writer.keyboard.simulate_key_release(MockKeyEvent('ctrl'))
 

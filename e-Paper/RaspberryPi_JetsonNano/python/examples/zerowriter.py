@@ -68,7 +68,7 @@ class ZeroWriter:
         self.menu_mode = False
         self.menu = None
         
-        self.file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
+        self.cache_file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
     
     def initialize(self):
         self.epd.init()
@@ -142,10 +142,10 @@ class ZeroWriter:
         print("rebooting")
         subprocess.run(['sudo', 'reboot', '-f'])
 
-    def load_previous_lines(self, file_path):
+    def load_previous_lines(self):
         try:
-            with open(self.file_path, 'r') as file:
-                print(self.file_path)
+            with open(self.cache_file_path, 'r') as file:
+                print(self.cache_file_path)
                 lines = file.readlines()
                 return [line.strip() for line in lines]
         except FileNotFoundError:
@@ -291,7 +291,12 @@ class ZeroWriter:
     def handle_key_press(self, e):
         if e.name== "s" and self.control_active:
             timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
-            filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}.txt')
+
+            ## first 30 chars of previous_lines
+            prefix = ''.join(self.previous_lines)[:30]
+            alphanum_prefix = ''.join(ch for ch in prefix if ch.isalnum())
+            
+            filename = os.path.join(os.path.dirname(__file__), 'data', f'zw_{timestamp}_{alphanum_prefix}.txt')
             self.save_previous_lines(filename, self.previous_lines)
             
             self.console_message = f"[Saved]"
@@ -392,7 +397,7 @@ class ZeroWriter:
                 self.input_content = "" #clears input content
                 self.cursor_position=0
                 #save the file when enter is pressed
-                self.save_previous_lines(self.file_path, self.previous_lines)
+                self.save_previous_lines(self.cache_file_path, self.previous_lines)
                 self.needs_display_update = True
             
         if e.name == 'ctrl': #if control is released
