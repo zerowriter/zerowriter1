@@ -30,6 +30,8 @@ epd.init() clears the screen using slow look up tables -- this prevents artifact
 
 epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" waveshare display.
 
+NOTE: I am using v1 of this display from waveshare.. on the back it says: Rev2.1 -- they are selling some Rev2.2 boards as well, which may be incompatible with my driver. The 2.2 boards might be workable, but someone would have to develop out a driver fix for that and implement the lookup tables and partial refreshes.
+
 An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates. Try playing with your overclocking settings to see if you get something that fits what you want to do.
 
 Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful.
