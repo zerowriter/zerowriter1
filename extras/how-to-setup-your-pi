@@ -1,0 +1,92 @@
+This is a step by step guide to end up with a functional computer -- no experience necessary. 
+
+I'm not a Linux guy, and it can be frustrating trying to get started in that world because -- frankly -- a lot of Linux users are the worst. I'll try to make this clear and approachable for anyone!
+
+Requirements:
+- Pi Zero 2W
+- Micro SD Card (faster is better, in theory)
+- Waveshare 4.2" wired into the Pi Zero 2W (refer to https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual pinouts)
+- Power for your Pi Zero
+
+1. Run The Raspberry Pi Imager
+
+https://www.raspberrypi.com/software/
+
+- Download and run the raspberry pi imager. This tool just formats your SD card to create the computer that runs the typewriter.
+
+- Use Debian Bookworm Lite 32bit -- the lite version skips some extra stuff the typewriter does not need. (64-bit is also ok, but has some noticeable performance issues probably due to the pi zero)
+
+- Use the gear icon to add extra settings to your install: 
+
+- Add your WIFI credentials. Set a hostname (zerowriter.local suggested) and username/password (zero/whateveryouwant) which will be used for connecting
+
+- Enable SSH. This is required so you can configure the typewriter remotely, without a traditional display.
+
+- Run the tool and it will wipe the SD card and install the image.
+
+2. Estabilish SSH connection
+
+- Install the SD card to the Pi, and connect to power. You should see blinking lights as it completes the first boot.
+- After a minute or so, open up Windows Power Shell or Terminal or whatever command line tool you want to use
+- Connect to your pi zero via: 
+- ssh zero@zerowriter.local
+- Your computer will connect to the pi zero and do some security stuff -- if you have errors here, there's usually an easy fix if you google it.
+- You will connect and be greeted with the pi zero's command line, woohoo, you are in the matrix.
+
+3. Configure Via SSH
+
+Follow these commands in order to set up the pi zero with the stuff it needs to run the typewriter:
+
+- sudo apt update
+- sudo apt full-upgrade
+
+- sudo apt install pip
+- sudo apt-get install python3-pil
+- sudo apt-get install python3-numpy
+- sudo pip3 install keyboard
+note: "if you get externally managed error:" sudo pip3 install keyboard --break-system-packages
+
+- sudo raspi-config and poke around...
+- (enable SPI via sudo raspi-config -> interface so your display will run)
+
+Lastly, clone the code to your pi so you can run the typewriter:
+
+- sudo apt install git
+- git clone https://github.com/zerowriter/zerowriter1.git
+
+Navigate to the typewriter's directory and run it:
+
+- cd zerowriter1
+- cd e-Paper
+- cd RaspberryPi_JetsonNano
+- cd python
+- cd examples
+- sudo python main.py
+
+Make sure the typewriter runs before you keep going. If you run into weirdness, you can reboot via the command: sudo reboot now
+If you followed these steps, and you connected the display correctly, you should be running the sooftware now!
+
+4. Configure crontab
+
+Crontab just gets your pi zero to run stuff on boot up. We aren't interested in any of the linux stuff (well, I'm not) -- so we just boot to the program and that's all that we need.
+  
+- at command line, type "crontab -e" (choose the option for the nano editor)
+- scroll to the bottom and add the line: "@reboot cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &"
+- CTRL + O to save (write out) the file, CTRL + X to exit. You should see confirmation that crontab updated.
+- "sudo reboot now" and restart, it should boot to the typewriter automatically now.
+- note: if you have trouble with your typewriter, i'd suggest commenting out the crontab line and controlling everything yourself manually via SSH until you resolve whatever issue you have.
+
+5. (Optional) Overclock your pi zero
+
+You can adjust your Pi Zero's settings to get better theoretical performance at the cost of power consumption.
+
+- at command line, type sudo nano /boot/config.txt
+- overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
+- GPU_freq seems to have the highest impact on reducing latency. arm_freq will help with the responsiveness but seems to cause instability. Lower these values to preserve battery life and reduce heat.
+- if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example)
+
+6. (Optional) Install SMB for file access
+
+If you want to easily access your files from another computer, you should install SMB to your pi.
+https://pimylifeup.com/raspberry-pi-samba/
+This means you can access the data on the zerowriter from any local device :-)
