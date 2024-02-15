@@ -4,6 +4,9 @@ An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginne
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
 
 ----------
+This branch is specifically for the waveshare 4.2 rev 2.2 display.
+If you look on the back of your display, you can see a Rev number.
+----------
  
 The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets!
 
@@ -17,13 +20,9 @@ How it works:
 
 Inside the e-Paper directory, I built an application on top of the example code from waveshare. You can find it in e-Paper/RaspberryPiJetsonNano/python/examples main.py
 
-The application itself can be modified to do whatever you want. The basics:
+The application itself can be modified to do whatever you want.
 
-epd.init() clears the screen using slow look up tables -- this prevents artifacting
-
-epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" waveshare display.
-
-An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates.
+An overclocked Pi Zero 2 W can handle running this stuff around 200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates.
 
 Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful unless you have a high tolerance for display latency.
 
