@@ -57,8 +57,7 @@ class RaspberryPi:
         return self.GPIO.input(pin)
 
     def delay_ms(self, delaytime):
-        time.sleep(0)
-        #time.sleep(delaytime / 100000.0)
+        time.sleep(delaytime / 1000.0)
 
     def spi_writebyte(self, data):
         self.SPI.writebytes(data)
@@ -79,9 +78,8 @@ class RaspberryPi:
 
         # SPI device, bus = 0, device = 0
         self.SPI.open(0, 1)
-        self.SPI.max_speed_hz = 99999999#90000000
-        self.SPI.mode = 0b11 #0b00 originally 0b00 trying 0b11
-        #self.SPI.read0 = 1
+        self.SPI.max_speed_hz = 90000000
+        self.SPI.mode = 0b11
         return 0
 
     def module_exit(self):
@@ -96,7 +94,7 @@ class RaspberryPi:
         self.GPIO.cleanup([self.RST_PIN, self.DC_PIN, self.CS_PIN, self.BUSY_PIN, self.PWR_PIN])
 
 implementation = RaspberryPi()
-print("epd.config loaded")
+print("epd.config loaded new")
 for func in [x for x in dir(implementation) if not x.startswith('_')]:
     setattr(sys.modules[__name__], func, getattr(implementation, func))
 
