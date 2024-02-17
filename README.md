@@ -1,3 +1,10 @@
+This branch is experimental. There is a current bug when loading the program related to initializing the display. Sometimes, the epd.init /epd.clear are not executing as intended, which causes a bunch of display related issues.
+Feel free to experiment with this branch (and let me know if you solve this bug)
+
+It works flawlessly on my development unit, but on a fresh install the bug has cropped up. So maybe a library or recent update to a SPI driver or something? Not too sure.
+
+
+
 # zerowriter
 
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
