@@ -11,7 +11,7 @@ https://www.raspberrypi.com/software/
 
 - Download and run the raspberry pi imager. This tool just formats your SD card to create the computer that runs the typewriter.
 
-- Use Debian Bookworm Lite 32bit -- the lite version skips some extra stuff the typewriter does not need. (64-bit is also ok, but has some noticeable performance issues probably due to the pi zero)
+- Use Debian Bookworm Lite 32bit. The pi zero2w is VERY constrained for memory. You may have reliability issues with the display driver if you use a desktop OS or 64bit OS.
 
 - Use the gear icon to add extra settings to your install: 
 
@@ -34,15 +34,18 @@ https://www.raspberrypi.com/software/
 
 Follow these commands in order to set up the pi zero with the stuff it needs to run the typewriter:
 
-- sudo apt update
-- sudo apt full-upgrade
+sudo apt update
+sudo apt full-upgrade
 
-- sudo apt install pip
-- sudo apt-get install python3-pil
-- sudo apt-get install python3-numpy
-- sudo pip3 install keyboard
-- sudo pip3 install yagmail
-- sudo pip3 install qrcode
+and then (can copy paste these if easier):
+
+sudo apt install pip
+sudo apt-get install python3-pil
+sudo apt-get install python3-numpy
+sudo pip3 install keyboard
+sudo pip3 install yagmail
+sudo pip3 install qrcode
+
 note: "if you get externally managed error:" sudo pip3 install keyboard --break-system-packages
 
 - sudo raspi-config and poke around...
@@ -50,17 +53,13 @@ note: "if you get externally managed error:" sudo pip3 install keyboard --break-
 
 Lastly, clone the code to your pi so you can run the typewriter:
 
-- sudo apt install git
-- git clone -b waveshare_2.2 https://github.com/zerowriter/zerowriter1.git
+sudo apt install git
+git clone -b waveshare_2.2 https://github.com/zerowriter/zerowriter1.git
 
 Navigate to the typewriter's directory and run it:
 
-- cd zerowriter1
-- cd e-Paper
-- cd RaspberryPi_JetsonNano
-- cd python
-- cd examples
-- sudo python main.py
+cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples
+sudo python main.py
 
 Make sure the typewriter runs before you keep going. If you run into weirdness, you can reboot via the command: sudo reboot now
 If you followed these steps, and you connected the display correctly, you should be running the sooftware now!
