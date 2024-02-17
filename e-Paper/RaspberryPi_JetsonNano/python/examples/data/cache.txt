@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 Welcome!
 =======
 Youtube Script:
@@ -29,5 +28,3 @@ secret stuff for youtube
 followers and reddit people...
 
 neat ;)
-
->>>>>>> Stashed changes
