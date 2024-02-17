@@ -31,9 +31,6 @@ try:
   zero_writer.keyboard = keyboard
   zero_writer.initialize()
   time.sleep(1)
-  zero_writer.epd.Clear()
-  zero_writer.epd.sleep()
-  time.sleep(1)
   zero_writer.run()
 
 except KeyboardInterrupt:
