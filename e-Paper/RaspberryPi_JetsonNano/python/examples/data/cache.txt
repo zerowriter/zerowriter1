@@ -1,1 +1,33 @@
+<<<<<<< Updated upstream
 Welcome!
+=======
+Youtube Script:
+
+The ctrl r refreshes the screen
+to give it a nice clean slate.
+
+Ok, back to scripting...
+
+First section should be shots of 
+the previous zerowriter footage. 
+Voiceover should talk about how
+i was surprised to find out
+waveshare discontinued my
+display...
+
+second section should be this
+footage. the demo footage of the 
+new refresh rates in the 2.2
+
+third section should be the new
+features in the menu and the
+future of the project.
+
+and the fourth section should be 
+about the next steps −− the top
+secret stuff for youtube
+followers and reddit people...
+
+neat ;)
+
+>>>>>>> Stashed changes
