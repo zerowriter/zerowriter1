@@ -30,7 +30,6 @@ try:
   zero_writer.epd = epd4in2_V2.EPD()
   zero_writer.keyboard = keyboard
   zero_writer.initialize()
-  time.sleep(1)
   zero_writer.run()
 
 except KeyboardInterrupt:
