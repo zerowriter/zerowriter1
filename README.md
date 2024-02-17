@@ -5,6 +5,25 @@ Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentsl
 
 ----------
 This branch merges jacobsmith's update with the fixed driver for the rev 2.2 waveshare display. This branch does not yet support the rev 2.1 (original) display.
+
+This branch will replace the main branch as the codebase is much more feature complete. The 2.2 display will be "THE" supported 4.2" display going forward, as the 2.1 display is not beign manufactured anymore.
+
+NEW: Program Features
+- light weight python typewriter
+- works with any USB keyboard
+- KEYMAPS file  to edit key maps if you don't want to program your keyboard's firmware
+- files save in the /data directory where the program resides
+- autosaves the cache every time return is pressed
+- CTRL R forces screen refresh, handy for catching eink bugs
+- CTRL S (quicksave) saves the cache to a txt file
+- CTRL N starts a new file
+- CTRL G sends a gmail to yourself if configured
+- Save As: save a file with a unique name instead of the quicksave
+- File browser: load previous files to continue, or press CTRL+BACKSPACE to delete. Deleted files are just moved to the Archive folder 
+- Server: you can access your files from your browser via local webserver
+- Wi Fi manager: you can find and join local networks. Currently only supports password protected networks.
+- Arrow keys can be used to navigate through and review previous writing -- no editing.
+
 ----------
  
 The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets! Use this modified code at your own risk. The modified driver may cause damage to your display. Don't blame me.
@@ -39,22 +58,6 @@ Hardware Features
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
-
-Program Features
-- light weight python typewriter in 700 lines of code
-- works with any USB keyboard
-- KEYMAPS file  to edit key maps if you don't want to program your keyboard's firmware
-- files save in the /data directory where the program resides
-- autosaves the cache every time return is pressed
-- CTRL R forces screen refresh, handy for catching eink bugs
-- CTRL S (quicksave) saves the cache to a txt file
-- CTRL N starts a new file
-- CTRL G sends a gmail to yourself if configured
-- Save As: save a file with a unique name instead of the quicksave
-- File browser: load previous files to continue, or press CTRL+BACKSPACE to delete. Deleted files are just moved to the Archive folder 
-- Server: you can access your files from your browser via local webserver
-- Wi Fi manager: you can find and join local networks. Currently only supports password protected networks.
-- Arrow keys can be used to navigate through and review previous writing -- no editing.
 
 Crontab
   - this launches the typewriter on powerup
