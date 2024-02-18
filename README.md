@@ -51,24 +51,23 @@ Use a Pi Zero 2W. Don't use an original Zero.
 Setup / Getting Started
 - requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
 - set up ssh and configure your pi zero remotely via terminal or powershell
-- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout and install instructions. You can use my e-Paper directory instead of theirs, but probably test with their code first
+- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout. probably test with their code first to make sure display works.
 - Drop in the e-Paper folder provided in this repo and run sudo python main.py from ssh
-- install SMB or similar so you can access your files via SMB from another device
-- Set up crontab (from command line: crontab -e) to boot to main.py
 
-Hardware Features
+Hardware 
 - 40% keyboard and an eink display
 - tons of storage
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
 
-Crontab
-  - this launches the typewriter on powerup
-  - install crontab
-  - at ssh commandline, type crontab -e and add this line at the bottom:
-  #@reboot cd e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
+For automatic startup:
+Bashrc (instead of crontab) is more reliable:
+from command line type: sudo nano ~/.bashrc
+At the bottom, add:
+cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/
+sudo python main.py
 
-But instead, I'd recomend using a bashrc file and getting it to boot that folder up. Because crontab actually keeps a terminal running in the background and the user could do some weird stuff unintentionally, oops.
+
 
 Enjoy! Have fun. Happy writing.
