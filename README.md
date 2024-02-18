@@ -7,6 +7,8 @@ Waveshare no longer manufactures rev2.1 displays.
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
 
+Setup: https://github.com/zerowriter/zerowriter1/blob/waveshare_2.2/setup_2.2
+
 ----------
 This branch merges jacobsmith's update with the fixed driver for the rev 2.2 waveshare display. This branch does not yet support the rev 2.1 (original) display.
 
@@ -50,9 +52,8 @@ Use a Pi Zero 2W. Don't use an original Zero.
 
 Setup / Getting Started
 - requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
-- set up ssh and configure your pi zero remotely via terminal or powershell
 - https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout. probably test with their code first to make sure display works.
-- Drop in the e-Paper folder provided in this repo and run sudo python main.py from ssh
+- (https://github.com/zerowriter/zerowriter1/blob/waveshare_2.2/setup_2.2)
 
 Hardware 
 - 40% keyboard and an eink display
@@ -60,14 +61,6 @@ Hardware
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
-
-For automatic startup:
-Bashrc (instead of crontab) is more reliable:
-from command line type: sudo nano ~/.bashrc
-At the bottom, add:
-cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/
-sudo python main.py
-
 
 
 Enjoy! Have fun. Happy writing.
