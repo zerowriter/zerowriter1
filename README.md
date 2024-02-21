@@ -1,5 +1,13 @@
 # zerowriter
 
+----------
+
+Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2, you'll want to use this branch: https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
+
+Otherwise, if you have a 2.1 display, you can use the main branch. Note that the main branch will be discontinued and replaced with the 2.2 branch soon.
+
+----------
+
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
 
 This project is open-source. Do whatever you want with it. Please note the display drivers and waveshare code belongs to them. But buy their displays, they rock.
@@ -11,11 +19,6 @@ Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentsl
 pi zero setup steps: https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
 
 ----------
-
-Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2, you'll want to use this branch: https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
-
-----------
-
  
 The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets!
 
