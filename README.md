@@ -11,6 +11,11 @@ Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentsl
 pi zero setup steps: https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
 
 ----------
+
+Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2, you'll want to use this branch: https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
+
+----------
+
  
 The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets!
 
