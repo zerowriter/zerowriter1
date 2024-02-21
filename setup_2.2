@@ -66,10 +66,9 @@ sudo python main.py
 sudo systemctl enable NetworkManager 
 > should fix it. But note this will probably kill your SSH connection and you may need to connect to a display to get to the command line again.
 
-4. Configure bashrc (do this after you get the typewriter running correctly from command line)
+4. Configure bashrc (do this after you get the typewriter running correctly from command line) (seriously, don't do this until you are sure the application works)
 
-? Bashrc gets your pi zero to run stuff on boot up. 
-  
+> Bashrc gets your pi zero to run stuff on boot up. 
 sudo nano nano ~/.bashrc
 > scroll to the bottom and add the lines: 
 cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/
@@ -78,17 +77,22 @@ sudo python main.py
 sudo reboot now
 > it should boot to the typewriter automatically now.
 
+
+--------
+Optional Steps Below
+--------
+
 5. (Optional) Overclock your pi zero
 
 You can adjust your Pi Zero's settings to get better theoretical performance at the cost of power consumption.
 
-- at command line, type sudo nano /boot/config.txt
-- overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
-- GPU_freq seems to have the highest impact on reducing latency. arm_freq will help with the responsiveness but seems to cause instability. Lower these values to preserve battery life and reduce heat.
-- if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example) and sometimes display corruption or memory issues
+> at command line, type:
+sudo nano /boot/config.txt
+> checkout youtube or google for pi zero 2w overclocking suggestions
+> overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
+> if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example) and sometimes display corruption or memory issues
 
-6. (Optional) Install SMB for file access
+6. (Optional) Install SMB for file access (recomended if you are developing / building on the python code)
 
-If you want to easily access your files from another computer, you should install SMB to your pi.
-https://pimylifeup.com/raspberry-pi-samba/
-This means you can access the data on the zerowriter from any local device :-)
+> If you want to easily access and manage your files from another computer, you should install SMB to your pi.
+> https://pimylifeup.com/raspberry-pi-samba/
