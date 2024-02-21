@@ -45,7 +45,7 @@ sudo pip3 install qrcode
 
 sudo raspi-config
 > (enable SPI via sudo raspi-config -> interface so your display will run)
-> (system options -> boot auto login -> console autologin) -- this is to help autostart the typewriter
+> (system options -> boot auto login -> console autologin) -- this is to help autostart things later
 
 > Clone the code from github to your pi so you can run the typewriter:
 
@@ -59,6 +59,12 @@ sudo python main.py
 
 > Make sure the typewriter runs before you keep going. If you run into weirdness, you can reboot via the command: sudo reboot now
 > If you followed these steps, and you connected the display correctly, you should be running the sooftware now!
+
+3.1: Network Troubleshooting
+
+> If you do not see Wifi networks in the menu, it means that your pi hasn't initialized the controller yet.
+sudo systemctl enable NetworkManager 
+> should fix it. But note this will probably kill your SSH connection and you may need to connect to a display to get to the command line again.
 
 4. Configure bashrc (do this after you get the typewriter running correctly from command line)
 
