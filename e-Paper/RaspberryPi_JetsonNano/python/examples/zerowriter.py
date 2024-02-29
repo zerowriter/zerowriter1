@@ -11,7 +11,7 @@ import subprocess
 from gmailhandle import GmailCredentials
 from PIL import Image, ImageDraw, ImageFont
 
-
+delay = .100 #standard delay v2.2, 2.1 can use 0
 font24 = ImageFont.truetype('Courier Prime.ttf', 18)
 
 class Menu:
@@ -36,14 +36,14 @@ class Menu:
         if self.selected_item < 0:
             self.selected_item = len(self.menu_items) - 1
         self.display()
-        time.sleep(.15)
+        time.sleep(delay)
     
     def down(self):
         self.selected_item += 1
         if self.selected_item > len(self.menu_items) - 1:
             self.selected_item = 0
         self.display()
-        time.sleep(.15)
+        time.sleep(delay)
 
     def select(self):
         self.menu_items[self.selected_item]['action']()
@@ -65,6 +65,7 @@ class Menu:
 
         partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display_Partial(partial_buffer)
+        time.sleep(delay)
 
     def save_as(self):
         self.ending_content=""
@@ -94,7 +95,7 @@ class Menu:
         self.display_draw.text((10, 270), str(temp_content), font=font24, fill=0)        
         partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display_Partial(partial_buffer)
-        time.sleep(.15)
+        time.sleep(delay)
 
     def getInput(self, prompt, callback):
         self.inputMode = True
@@ -105,11 +106,11 @@ class Menu:
     def cleanupInput(self):
         self.inputMode = False
         self.input_content=""
-        time.sleep(.15) 
+        time.sleep(delay) 
         self.display()
 
     def consolemsg(self, text):
-        time.sleep(.15)
+        time.sleep(delay)
         self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
         temp_content = text
         # Draw input line text
@@ -120,6 +121,7 @@ class Menu:
         self.display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
         partial_buffer = self.epd.getbuffer(self.display_image)
         self.epd.display_Partial(partial_buffer)
+        time.sleep(delay)
 
 class ZeroWriter:
     def __init__(self):
@@ -132,7 +134,6 @@ class ZeroWriter:
         self.input_content = ""
         self.previous_lines = []
         self.needs_display_update = False
-        self.needs_input_update = False
         self.chars_per_line = 32
         self.lines_on_screen = 12
         self.font_size = 18
@@ -177,10 +178,21 @@ class ZeroWriter:
         self.gmail_menu = Menu(self.display_draw, self.epd, self.display_image)
         self.populate_gmail_menu()
 
+        #second init should catch if initial init has errors.
+        time.sleep(.25)
+        self.epd.init()
+        self.epd.Clear()
+        self.check_nmcli()
+
+
     def get_ssid(self):
-        raw_wifi = subprocess.check_output(['iwgetid', '-r'])
-        data_strings = raw_wifi.decode('utf-8').split()
-        return data_strings
+        try:
+            raw_wifi = subprocess.check_output(['iwgetid', '-r'])
+            data_strings = raw_wifi.decode('utf-8').split()
+            return data_strings
+        except Exception as e:
+            return(e)
+            print("error getting current SSID")
 
     def start_server(self):
         try:
@@ -213,7 +225,6 @@ class ZeroWriter:
         self.menu = self.parent_menu
         self.populate_main_menu()
         self.menu.display()
-        time.sleep(.2)
 
     def populate_main_menu(self):
         self.menu.menu_items.clear()
@@ -259,7 +270,7 @@ class ZeroWriter:
                 self.menu.display()
         except Exception as e:
             self.menu.consolemsg(f"{e}.")
-            print(e)
+            print(e)        
 
     def populate_networks_menu(self):
         self.networks_menu.menu_items.clear()
@@ -279,7 +290,7 @@ class ZeroWriter:
     def update_manual_ssid(self, networkname):
         self.manual_network=networkname
         self.populate_networks_menu()
-        print("new network "+ networkname)
+        print("new network: "+ networkname)
 
     def populate_gmail_menu(self):
         gmusername = str(GmailCredentials.load_gmail_username())
@@ -297,13 +308,13 @@ class ZeroWriter:
     
 
     def gmail_send(self):
-        gmusername = str(GmailCredentials.load_gmail_username())
-        gmpassword = str(GmailCredentials.load_gmail_password())
-        contents = self.previous_lines
         try:
+            gmusername = str(GmailCredentials.load_gmail_username())
+            gmpassword = str(GmailCredentials.load_gmail_password())
+            contents = self.previous_lines
             GmailCredentials.send_gmail(gmusername, gmpassword, contents)
             self.hide_menu()
-            time.sleep(.2)
+            time.sleep(delay)
             if self.menu_mode:
                 self.menu.consolemsg(">>> Gmail Sent.")
             else:
@@ -311,7 +322,7 @@ class ZeroWriter:
 
         except Exception as e:
             self.hide_menu()
-            time.sleep(.2)
+            time.sleep(delay)
             if self.menu_mode:
                 self.menu.consolemsg(">>> Gmail Failed.")
             else:
@@ -320,6 +331,27 @@ class ZeroWriter:
     def connect_to_network(self, network, password):
         self.connect_to_wifi(network, password)
         return
+
+    def check_nmcli(self):
+        print("checking for networking")
+        try:
+            # Run nmcli to check the status of NetworkManager
+            process = subprocess.Popen(['nmcli', 'general', 'status'], 
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate(timeout=5)
+            print(stdout)
+            print(stderr)
+            if b'Error' in stderr:
+                print("NetworkManager not running. Enabling.")
+                # Enable NetworkManager
+                subprocess.run(['sudo', 'systemctl', 'enable', 'NetworkManager'])
+                time.sleep(1)
+                subprocess.run(['sudo', 'systemctl', 'start', 'NetworkManager'])
+                time.sleep(1)
+            else:
+                print("NetworkManager is enabled.")
+        except subprocess.TimeoutExpired:
+            print("Networking not detected or configured.")
 
     def connect_to_wifi(self, ssid, password):
         try:
@@ -341,12 +373,9 @@ class ZeroWriter:
             self.menu.consolemsg("Error: Connection Timeout.")
             return False
 
-    def consolemsg(self, text): #console messages
+    def consolemsg(self, text):
         self.console_message = text
-        self.update_display()
-        time.sleep(1.5)
-        self.console_message = ""
-        self.update_input_area()
+        self.needs_display_update=True
 
     def load_file_into_previous_lines(self, filename):
         file_path = os.path.join(os.path.dirname(__file__), 'data', filename)
@@ -389,7 +418,6 @@ class ZeroWriter:
         self.epd.init()
         self.epd.Clear()
         time.sleep(3)
-
         subprocess.run(['sudo', 'poweroff', '-f'])
 
     def save_previous_lines(self, file_path, lines):
@@ -409,10 +437,9 @@ class ZeroWriter:
           print("Failed to save file:", e)
 
     def hide_menu(self):
+        time.sleep(delay*2)
         self.menu_mode = False
-        self.update_display()
-        self.update_input_area()
-        time.sleep(.2)
+        self.needs_display_update = True
 
     def show_menu(self):
         self.populate_main_menu()
@@ -421,8 +448,6 @@ class ZeroWriter:
             self.menu = self.parent_menu
         self.selected_item = 0
         self.menu.display()
-        time.sleep(.2)
-
 
     def display_qr_code(self):
         self.menu_mode = True        
@@ -457,6 +482,7 @@ class ZeroWriter:
             # Update the display with the new image
             partial_buffer = self.epd.getbuffer(self.display_image)
             self.epd.display_Partial(partial_buffer)
+            time.sleep(delay)
         except Exception as e:
             self.menu.consolemsg(e)
 
@@ -490,15 +516,14 @@ class ZeroWriter:
         self.needs_display_update = False
 
     def update_input_area(self):
-        if not self.menu_mode:
+        #if not self.menu_mode:
+        if not self.updating_input_area and self.scrollindex==1:
+            self.updating_input_area = True
             cursor_index = self.cursor_position
             self.display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display
-            #add cursor
             temp_content = self.input_content[:cursor_index] + "|" + self.input_content[cursor_index:]
-            #draw input line text
             self.display_draw.text((10, 270), str(temp_content), font=font24, fill=0)
-            #generate display buffer for input line
-            self.updating_input_area = True
+            #self.updating_input_area = True
             partial_buffer = self.epd.getbuffer(self.display_image)
             self.epd.display_Partial(partial_buffer)
             self.updating_input_area = False
@@ -511,14 +536,14 @@ class ZeroWriter:
             self.input_content = self.input_content[:cursor_index] + character + self.input_content[cursor_index:]
             self.cursor_position += 1  # Move the cursor forward
         
-        self.needs_input_update = True
+        #self.needs_input_update = True
 
     def delete_character(self):
         if self.cursor_position > 0:
             # Remove the character at the cursor position
             self.input_content = self.input_content[:self.cursor_position - 1] + self.input_content[self.cursor_position:]
             self.cursor_position -= 1  # Move the cursor back
-            self.needs_input_update = True
+            #self.needs_input_update = True
 
     def handle_key_down(self, e):
         if e.name == 'shift': #if shift is released
@@ -543,24 +568,22 @@ class ZeroWriter:
         #self.consolemsg("[Save As: ]" + f'{userinput}.txt')
 
     def set_gmail_id(self, userinput):
-        GmailCredentials.write_gmail_username(userinput)
-        self.populate_gmail_menu()
-        time.sleep(.2)
-        self.menu.display()
+        try:
+            GmailCredentials.write_gmail_username(userinput)
+            self.populate_gmail_menu()
+            time.sleep(delay)
+            self.menu.display()
+        except Exception as e:
+            print(e)
 
     def set_gmail_pass(self, userinput):
-        GmailCredentials.write_gmail_password(userinput)
-        self.populate_gmail_menu()
-        time.sleep(.2)
-        self.menu.display()
-
-    def confirm_delete_file(self, userinput):
-        self.hide_menu
-        self.hide_child_menu
-
-        if userinput=="delete":
-            self.consolemsg("[Deleted: ]")# + f'{userinput}.txt')
-            self.new_file()
+        try:
+            GmailCredentials.write_gmail_password(userinput)
+            self.populate_gmail_menu()
+            time.sleep(delay)
+            self.menu.display()
+        except Exception as e:
+            print(e)
 
 
     def handle_key_press(self, e):
@@ -610,20 +633,24 @@ class ZeroWriter:
         if e.name == "esc":
             self.show_menu()
 
-        if e.name== "down" or e.name== "right":
-          #move scrollindex down
+        if e.name== "down" or e.name== "right" and display_updating==False:
           self.scrollindex = self.scrollindex - 1
           if self.scrollindex < 1:
                 self.scrollindex = 1
           self.consolemsg(f'[{round(len(self.previous_lines)/self.lines_on_screen)-self.scrollindex+1}/{round(len(self.previous_lines)/self.lines_on_screen)}]')
+          self.needs_display_update = True
+          time.sleep(delay)
+          
 
-        if e.name== "up" or e.name== "left":
-          #move scrollindex up
+        if e.name== "up" or e.name== "left" and display_updating==False:
           self.scrollindex = self.scrollindex + 1
           if self.scrollindex > round(len(self.previous_lines)/self.lines_on_screen+1):
                 self.scrollindex = round(len(self.previous_lines)/self.lines_on_screen+1)
           self.consolemsg(f'[{round(len(self.previous_lines)/self.lines_on_screen)-self.scrollindex+1}/{round(len(self.previous_lines)/self.lines_on_screen)}]')
-        
+          self.needs_display_update = True
+          time.sleep(delay)
+
+
         #shortcuts:
         if e.name== "s" and self.control_active: #ctrl+s quicksave file
             self.save_file()
@@ -649,12 +676,11 @@ class ZeroWriter:
                 self.needs_display_update = True #trigger a display refresh
             # Update cursor_position to the length of the remaining input_content
             self.cursor_position = len(self.input_content)
-            
-            self.needs_input_update = True
+            #self.needs_input_update = True
             
         if e.name == "backspace":
             self.delete_character()
-            self.needs_input_update = True
+            #self.needs_input_update = True
                 
         elif e.name == "space": #space bar
             self.insert_character(" ")
@@ -666,14 +692,16 @@ class ZeroWriter:
                 self.needs_display_update = True
             # Update cursor_position to the length of the remaining input_content
             self.cursor_position = len(self.input_content)
-            self.needs_input_update = True
+            #self.needs_input_update = True
         
         elif e.name == "enter":
             if self.scrollindex>1:
                 #if you were reviewing text, jump to scrollindex=1
                 self.scrollindex = 1
+                time.sleep(delay)
                 self.update_display()
-                time.sleep(.2)
+                time.sleep(delay)
+                
             else:
                 # Add the input to the previous_lines array
                 self.previous_lines.append(self.input_content)
@@ -691,7 +719,7 @@ class ZeroWriter:
                 self.input_content += e.name
 
             self.cursor_position += 1
-            self.needs_input_update = True
+            #self.needs_input_update = True
 
             # Check if adding the character exceeds the line length limit
             if self.cursor_position > self.chars_per_line:
@@ -709,7 +737,7 @@ class ZeroWriter:
             self.cursor_position = len(self.input_content)                
             
         self.typing_last_time = time.time()
-        self.needs_input_update = True
+        #self.needs_input_update = True
 
     def handle_interrupt(self, signal, frame):
       self.keyboard.unhook_all()
@@ -729,16 +757,13 @@ class ZeroWriter:
         
         elif self.needs_display_update and not self.display_updating:
             self.update_display()
-            time.sleep(.200)
             self.update_input_area()
-            time.sleep(.125)
-
+            time.sleep(delay) #*2?
             self.typing_last_time = time.time()
 
         elif (time.time()-self.typing_last_time)<(.6):
-            if not self.updating_input_area and self.scrollindex==1:
+            if not self.updating_input_area and not self.menu_mode and self.scrollindex==1:
                 self.update_input_area()
-                time.sleep(.15) #this sleep keeps the display accurate
 
     def run(self):
         self.load_file_into_previous_lines("cache.txt")
