@@ -158,8 +158,9 @@ class ZeroWriter:
         self.display_draw = ImageDraw.Draw(self.display_image)
         self.last_display_update = time.time()
 
-        #signal.signal(signal.SIGINT, signal.SIG_IGN) #uncomment these to block terminal interrupts
-        #signal.signal(signal.SIGTSTP, signal.SIG_IGN)
+        #comment these two lines if you want to keep terminal interupts
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
         self.start_server()
 
