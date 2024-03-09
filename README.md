@@ -1,28 +1,39 @@
+This branch is experimental. There is a current bug when loading the program related to initializing the display. Sometimes, the epd.init /epd.clear are not executing as intended, which causes a bunch of display related issues.
+Feel free to experiment with this branch (and let me know if you solve this bug)
+
+It works flawlessly on my development unit, but on a fresh install the bug has cropped up. So maybe a library or recent update to a SPI driver or something? Not too sure.
+
+
+
 # zerowriter
 
-----------
-
-Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2, you'll want to use this branch: https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
-
-Otherwise, if you have a 2.1 display, you can use the main branch. Note that the main branch will be discontinued and replaced with the 2.2 branch soon.
-
-----------
-
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
-
-This project is open-source. Do whatever you want with it. Please note the display drivers and waveshare code belongs to them. But buy their displays, they rock.
-
-Credit to: https://penkesu.computer/ for the original project that inspired this.
-
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
 
-pi zero setup steps: https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
+----------
+This branch merges jacobsmith's update with the fixed driver for the rev 2.2 waveshare display. This branch does not yet support the rev 2.1 (original) display.
+
+This branch will replace the main branch as the codebase is much more feature complete. The 2.2 display will be "THE" supported 4.2" display going forward, as the 2.1 display is not beign manufactured anymore.
+
+NEW: Program Features
+- light weight python typewriter
+- works with any USB keyboard
+- KEYMAPS file  to edit key maps if you don't want to program your keyboard's firmware
+- files save in the /data directory where the program resides
+- autosaves the cache every time return is pressed
+- CTRL R forces screen refresh, handy for catching eink bugs
+- CTRL S (quicksave) saves the cache to a txt file
+- CTRL N starts a new file
+- CTRL G sends a gmail to yourself if configured
+- Save As: save a file with a unique name instead of the quicksave
+- File browser: load previous files to continue, or press CTRL+BACKSPACE to delete. Deleted files are just moved to the Archive folder 
+- Server: you can access your files from your browser via local webserver
+- Wi Fi manager: you can find and join local networks. Currently only supports password protected networks.
+- Arrow keys can be used to navigate through and review previous writing -- no editing.
 
 ----------
  
-The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets!
-
-Use this modified code at your own risk. The modified driver may cause damage to your display. Don't blame me.
+The e-Paper directory is modified waveshare drivers. All waveshare code belongs to them. Great company, buy their gadgets! Use this modified code at your own risk. The modified driver may cause damage to your display. Don't blame me.
 
 I have included .STL files for the enclosure I have been using. Feel free to use them however you want.
 
@@ -30,74 +41,37 @@ I have included .STL files for the enclosure I have been using. Feel free to use
 
 How it works:
 
-Inside the e-Paper directory, I built an application on top of the example code from waveshare. You can find it in e-Paper/RaspberryPiJetsonNano/python/examples main.py
+Inside the e-Paper directory, I built an application on top of the example code from waveshare. You can find it in e-Paper/RaspberryPiJetsonNano/python/examples main.py. jacobsmith built some more features in, and I have adopted them in to the codebase and built them out further.
 
-The application itself can be modified to do whatever you want (or just leave it be). The basics:
+Zerowriter now has a menu system. It supports file functions: New, Save As, Load/Delete. It supports Gmail integration for emailing yourself files, but you should only use a burner account as info is stored in a json file. It can generate QR codes, connect to Wifi networks on-device, and host files for local access via a server.
 
-epd.init() clears the screen using slow look up tables -- this prevents artifacting
+An overclocked Pi Zero 2 W can handle running this stuff around 200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates.
 
-epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" waveshare display.
-
-NOTE: I am using v1 of this display from waveshare.. on the back it says: Rev2.1 -- they are selling some Rev2.2 boards as well, which may be incompatible with my driver. The 2.2 boards might be workable, but someone would have to develop out a driver fix for that and implement the lookup tables and partial refreshes.
-
-An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates. Try playing with your overclocking settings to see if you get something that fits what you want to do.
-
-Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful.
+Use a Pi Zero 2W. Don't use an original Zero.
 
 ----------
 
-Setup / Getting Started:
-
-https://github.com/zerowriter/zerowriter1/blob/main/how-to-setup-your-pi
-
-- requires pi zero 2w running bookworm, light install recomend (headless/no GUI)
+Setup / Getting Started
+- requires pi zero 2w running linux 12 bookworm, light install recomend (headless/no GUI)
 - set up ssh and configure your pi zero remotely via terminal or powershell
-- Drop in the e-Paper folder provided in this repo and run main.py from ssh
+- https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout and install instructions. You can use my e-Paper directory instead of theirs, but probably test with their code first
+- Drop in the e-Paper folder provided in this repo and run sudo python main.py from ssh
+- install SMB or similar so you can access your files via SMB from another device
 - Set up crontab (from command line: crontab -e) to boot to main.py
 
-Hardware Features:
+Hardware Features
 - 40% keyboard and an eink display
 - tons of storage
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
 
-Program Features:
-- light weight python typewriter
-- works with any USB keyboard
-- KEYMAPS file to edit key maps if you don't want to program your keyboard's firmware
-- files save in the /data directory where the program resides, access via SMB
-- autosaves the cache every time return is pressed
-- CTRL S saves the cache to a txt file
-- CTRL N starts a new file
-- CTRL ESC turns unit off.
-- (NEW, likely buggy) The arrow keys can be used to navigate through and review previous writing
-- You could easily add an output to google drive or etc
+Crontab
+  - this launches the typewriter on powerup
+  - install crontab
+  - at ssh commandline, type crontab -e and add this line at the bottom:
+  #@reboot cd e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
 
-Current Issues / Requests / Going Further:
-- I'm not a programmer, so my code isn't very clean.. would be great to have someone revise it at some point.
-- Running multiple instances of the display driver will cause weird issues -- be sure to kill the main.py process or reboot regularly if you are tinkering
-- Due to the way pi zero power works, there is no standby, so zerowriter consumes considerable power when idle. maybe someone can think of a creative workaround here?
-- The display buffer code from waveshare requires a full buffer even for partial display updates. Writing a display buffer is beyond what I can do... this would have big implications for speed / refresh rate
-- If you want to save power, you could disable networking entirely, and cut other services. I don't find it worth the trouble as I use SSH so frequently 
-- Want to install your own lipo battery? Go for it. There's space inside to accomodate. Thing is, it adds complexity and isn't really a fit for an easy DIY build. 'Cause you need to measure the lipo, and do other stuff to handle it... on the hardware and software side. I think it is beyond the scope for this project but feel free to do it yourself and share. I think it could be cool.
-- I'd like to keep this program simple and clean, so I want to avoid bloat... not interested in editing features, or even file managers and such. Maybe could change my mind on that.
+But instead, I'd recomend using a bashrc file and getting it to boot that folder up. Because crontab actually keeps a terminal running in the background and the user could do some weird stuff unintentionally, oops.
 
 Enjoy! Have fun. Happy writing.
-
-===
-
-Steps to use a Bluetooth Keyboard
-
-1. Run `sudo bluetoothctl`
-2. Run `agent on`
-3. Run `default-agent`
-4. Run `scan on`
-5. Wait until you see your device listed (be sure your keyboard is in pairing mode)
-6. Run `scan off`
-7. Run `devices` to list known Bluetooth devices
-8. Run `pair AA:BB:CC:DD:EE:FF` where `AA:BB:CC:DD:EE:FF` is the MAC address of your bluetooth keyboard
-9. You may need to reboot your raspberry pi before python is able to register your bluetooth keyboard.
-
-https://www.youtube.com/watch?v=UEmSsscijKE has a video walkthrough of the above steps as well.
-

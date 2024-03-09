@@ -332,7 +332,7 @@ class EPD:
         self.send_command(0x71)
         while epdconfig.digital_read(self.busy_pin) == 0:  # 0: idle, 1: busy
             self.send_command(0x71)
-            epdconfig.delay_ms(20)
+            epdconfig.delay_ms(100)
 
     def set_lut(self):
         self.send_command(0x20)  # vcom
@@ -425,7 +425,7 @@ class EPD:
         self.send_data(0xbf)  # KW-BF   KWR-AF  BWROTP 0f
 
         self.send_command(0x30)  # PLL setting
-        self.send_data(0x3C)  #3C 3A 100HZ   29 150Hz 39 200HZ  31 171HZ
+        self.send_data(0x3A)  #3C 3A 100HZ   29 150Hz 39 200HZ  31 171HZ
 
         self.send_command(0x61)  # resolution setting
         self.send_data(0x01)
@@ -438,7 +438,7 @@ class EPD:
 
         self.send_command(0X50)  # VCOM AND DATA INTERVAL SETTING
         self.send_data(
-            0xF7)  # 97white border 77black border  VBDF 17|D7 VBDW 97 VBDB 57  VBDF F7 VBDW 77 VBDB 37  VBDR B7
+            0x77)  # 97white border 77black border  VBDF 17|D7 VBDW 97 VBDB 57  VBDF F7 VBDW 77 VBDB 37  VBDR B7
 
         self.set_slow_lut()
         self.ReadBusy() #added aug17
@@ -466,14 +466,14 @@ class EPD:
         self.ReadBusy()
 
         self.send_command(0x00)  # panel setting
-        self.send_data(0xbf)  # KW-BF   KWR-AF  BWROTP 0f
+        self.send_data(0xaf)  # KW-BF   KWR-AF  BWROTP 0f #was BF
 
         self.send_command(0x30)  # PLL setting
-        self.send_data(0x3c)  #3c 3A 100HZ   29 150Hz **39** 200HZ  31 171HZ
+        self.send_data(0x29)  #3c** 3A 100HZ   29 150Hz 39 200HZ  31 171HZ
 
-        self.send_command(0x61)  # resolution setting
+        self.send_command(0x61) #61 # resolution setting
         self.send_data(0x01)
-        self.send_data(0x90)  # 128
+        self.send_data(0x90) 
         self.send_data(0x01)
         self.send_data(0x2c)
 
@@ -482,7 +482,7 @@ class EPD:
 
         self.send_command(0X50)  # VCOM AND DATA INTERVAL SETTING
         self.send_data(#17 or F7 = no flashing
-            0xF7)  #07def 97white border 77black border  VBDF *17*|D7 VBDW 97 VBDB 57  VBDF F7 VBDW 77 VBDB 37  VBDR B7
+            0x07)  #07def 97white border 77black border  VBDF *17*|D7 VBDW 97 VBDB 57  VBDF F7 VBDW 77 VBDB 37  VBDR B7
 
         self.set_lut()
         #self.ReadBusy()
@@ -515,7 +515,7 @@ class EPD:
         #print (time.time()-ms)
         return buf
 
-    def display(self, image):
+    def display(self, image): #full screen updates
         if self.width % 8 == 0:
             linewidth = int(self.width / 8)
         else:
@@ -523,12 +523,32 @@ class EPD:
 
         self.send_command(0x92) #91=partial 92=regular
         self.send_command(0x90)  # resolution setting
-        #self.set_lut() #likely not needed each time as the LUT are set on init.
+        #self.set_lut() #the LUT are set on init.
         self.send_command(0x10)
         self.send_data2([0xFF] * int(self.width * linewidth)) #high cpu overhead
         self.send_command(0x13)
         self.send_data2(image)
+        self.send_command(0x12) #refresh
+        self.ReadBusy()
+        self.send_command(0x12) #refresh
+        self.ReadBusy()
+        self.send_command(0x12) #refresh
+        self.ReadBusy()
 
+
+    def display_Partial(self, image):
+        if self.width % 8 == 0:
+            linewidth = int(self.width / 8)
+        else:
+            linewidth = int(self.width / 8) + 1
+
+        self.send_command(0x92) #91=partial 92=regular
+        self.send_command(0x90)  # resolution setting
+        #self.set_lut() #the LUT are set on init.
+        self.send_command(0x10)
+        #self.send_data2([0xFF] * int(self.width * linewidth)) #high cpu overhead
+        self.send_command(0x13)
+        self.send_data2(image)
         self.send_command(0x12) #refresh
        
         #self.ReadBusy()
