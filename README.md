@@ -14,6 +14,7 @@ If you are interested in editing or adjusting, check out the new4in2part.py driv
 
 An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginners.
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
+Setup Guide: https://github.com/zerowriter/zerowriter1/blob/main_full/setup_2.1
 
 ----------
 
