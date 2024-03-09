@@ -3,6 +3,8 @@ WAVESHARE V1 / 2.1 DISPLAYS ONLY
 This branch is experimental. This branch is for waveshare 2.1 displays and includes all the recent updates, like menus, filesharing, etc.
 It isn't tested very much yet but should be pretty stable.
 
+I will edit this update after I've tested and deployed it on some new units.
+
 Note / Disclaimer: The waveshare 2.1 is fast at the cost of clarity. You might find it a bit "muddy" -- that is because I have modified the original driver to prioritize speed over contrast. The 2.2 version is the opposite -- slower, cleaner, brighter.
 It's because of how the eink panels works. The 2.1 panel lets you control the speed (in hz) of how fast the waveform is applied.
 If you are interested in editing or adjusting, check out the new4in2part.py driver file. It's fairly well documented.
