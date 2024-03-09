@@ -2,9 +2,18 @@
 
 ----------
 
-Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2, you'll want to use this branch: https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
+Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2 or has a V2 sticker, you'll want to use this branch: 
 
-Otherwise, if you have a 2.1 display, you can use the main branch. Note that the main branch will be discontinued and replaced with the 2.2 branch soon.
+https://github.com/zerowriter/zerowriter1/tree/waveshare_2.2
+The waveshare_2.2 branch is built specifically for the v2 displays. The main branches won't function properly on these displays. Going forward, this will likely be the default branch for the project.
+
+If it says Rev2.1, you'll want to use these branches:
+
+https://github.com/zerowriter/zerowriter1/tree/main_full
+The main_full branch has a bunch of updates and includes a lot of new features.
+
+This main branch will be discontinued and not further developed.
+I am leaving it as-is because some people may want the simple typewriter with no extra software features. And it is a small codebase.
 
 ----------
 
@@ -36,13 +45,11 @@ The application itself can be modified to do whatever you want (or just leave it
 
 epd.init() clears the screen using slow look up tables -- this prevents artifacting
 
-epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" waveshare display.
+epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" v1 waveshare display.
 
-NOTE: I am using v1 of this display from waveshare.. on the back it says: Rev2.1 -- they are selling some Rev2.2 boards as well, which may be incompatible with my driver. The 2.2 boards might be workable, but someone would have to develop out a driver fix for that and implement the lookup tables and partial refreshes.
+NOTE: I am using v1 of this display from waveshare.. on the back it says: Rev2.1 -- they are selling some Rev2.2 boards as well, which may be incompatible with my driver.
 
-An overclocked Pi Zero 2 W can handle running this stuff around 150-200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates. Try playing with your overclocking settings to see if you get something that fits what you want to do.
-
-Use a Pi Zero 2. Don't use an original Zero. The extra power is very useful.
+Use a Pi Zero 2W. Don't use an original Zero. The extra power is very useful.
 
 ----------
 
@@ -74,16 +81,9 @@ Program Features:
 - (NEW, likely buggy) The arrow keys can be used to navigate through and review previous writing
 - You could easily add an output to google drive or etc
 
-Current Issues / Requests / Going Further:
-- I'm not a programmer, so my code isn't very clean.. would be great to have someone revise it at some point.
-- Running multiple instances of the display driver will cause weird issues -- be sure to kill the main.py process or reboot regularly if you are tinkering
-- Due to the way pi zero power works, there is no standby, so zerowriter consumes considerable power when idle. maybe someone can think of a creative workaround here?
-- The display buffer code from waveshare requires a full buffer even for partial display updates. Writing a display buffer is beyond what I can do... this would have big implications for speed / refresh rate
-- If you want to save power, you could disable networking entirely, and cut other services. I don't find it worth the trouble as I use SSH so frequently 
-- Want to install your own lipo battery? Go for it. There's space inside to accomodate. Thing is, it adds complexity and isn't really a fit for an easy DIY build. 'Cause you need to measure the lipo, and do other stuff to handle it... on the hardware and software side. I think it is beyond the scope for this project but feel free to do it yourself and share. I think it could be cool.
-- I'd like to keep this program simple and clean, so I want to avoid bloat... not interested in editing features, or even file managers and such. Maybe could change my mind on that.
+===
 
-Enjoy! Have fun. Happy writing.
+Have fun! Happy writing...
 
 ===
 
