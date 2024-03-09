@@ -1,8 +1,11 @@
-This branch is experimental. There is a current bug when loading the program related to initializing the display. Sometimes, the epd.init /epd.clear are not executing as intended, which causes a bunch of display related issues.
-Feel free to experiment with this branch (and let me know if you solve this bug)
+WAVESHARE V1 / 2.1 DISPLAYS ONLY
 
-It works flawlessly on my development unit, but on a fresh install the bug has cropped up. So maybe a library or recent update to a SPI driver or something? Not too sure.
+This branch is experimental. This branch is for waveshare 2.1 displays and includes all the recent updates, like menus, filesharing, etc.
+It isn't tested very much yet but should be pretty stable.
 
+Note / Disclaimer: The waveshare 2.1 is fast at the cost of clarity. You might find it a bit "muddy" -- that is because I have modified the original driver to prioritize speed over contrast. The 2.2 version is the opposite -- slower, cleaner, brighter.
+It's because of how the eink panels works. The 2.1 panel lets you control the speed (in hz) of how fast the waveform is applied.
+If you are interested in editing or adjusting, check out the new4in2part.py driver file. It's fairly well documented.
 
 
 # zerowriter
@@ -11,9 +14,8 @@ An easy, DIY eink typewriter running on a raspberry pi zero. Perfect for beginne
 Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentslist
 
 ----------
-This branch merges jacobsmith's update with the fixed driver for the rev 2.2 waveshare display. This branch does not yet support the rev 2.1 (original) display.
 
-This branch will replace the main branch as the codebase is much more feature complete. The 2.2 display will be "THE" supported 4.2" display going forward, as the 2.1 display is not beign manufactured anymore.
+This branch merges jacobsmith's update with the fixed driver for the rev 2.1 waveshare display.
 
 NEW: Program Features
 - light weight python typewriter
@@ -45,7 +47,7 @@ Inside the e-Paper directory, I built an application on top of the example code 
 
 Zerowriter now has a menu system. It supports file functions: New, Save As, Load/Delete. It supports Gmail integration for emailing yourself files, but you should only use a burner account as info is stored in a json file. It can generate QR codes, connect to Wifi networks on-device, and host files for local access via a server.
 
-An overclocked Pi Zero 2 W can handle running this stuff around 200ms. You might be able to squeeze performance with a better CPU, or maybe optimizing the buffer in the display driver. Currently, the buffer needs to calculate the entire screen buffer, even for partial updates.
+The waveshare 2.1 is fast at the cost of clarity. You might find it a bit "muddy" -- that is because I have modified the original driver to prioritize speed over contrast. The 2.2 version is the opposite -- slower, cleaner, brighter.
 
 Use a Pi Zero 2W. Don't use an original Zero.
 
@@ -57,7 +59,7 @@ Setup / Getting Started
 - https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual refer to the waveshare guide for pinout and install instructions. You can use my e-Paper directory instead of theirs, but probably test with their code first
 - Drop in the e-Paper folder provided in this repo and run sudo python main.py from ssh
 - install SMB or similar so you can access your files via SMB from another device
-- Set up crontab (from command line: crontab -e) to boot to main.py
+- Set up bashrc to boot to main.py
 
 Hardware Features
 - 40% keyboard and an eink display
@@ -65,13 +67,5 @@ Hardware Features
 - bring-your-own-battery-pack: 10,000mah battery will yield around 25-30 hours of usage, a lot more if you cut networking
 - or just plug it into something
 - portable! stylish! cool! modified from the https://penkesu.computer/ penkesu computer
-
-Crontab
-  - this launches the typewriter on powerup
-  - install crontab
-  - at ssh commandline, type crontab -e and add this line at the bottom:
-  #@reboot cd e-Paper/RaspberryPi_JetsonNano/python/examples/ && sudo python main.py &
-
-But instead, I'd recomend using a bashrc file and getting it to boot that folder up. Because crontab actually keeps a terminal running in the background and the user could do some weird stuff unintentionally, oops.
 
 Enjoy! Have fun. Happy writing.
