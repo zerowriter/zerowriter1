@@ -47,8 +47,6 @@ epd.init() clears the screen using slow look up tables -- this prevents artifact
 
 epd.init_Partial() runs a faster update using modified LUT. (Ben Krasnow: https://hackaday.com/2017/10/31/ben-krasnow-hacks-e-paper-for-fastest-refresh-rate/) -- important to note this only works with the 4.2" v1 waveshare display.
 
-NOTE: I am using v1 of this display from waveshare.. on the back it says: Rev2.1 -- they are selling some Rev2.2 boards as well, which may be incompatible with my driver.
-
 Use a Pi Zero 2W. Don't use an original Zero. The extra power is very useful.
 
 ----------
