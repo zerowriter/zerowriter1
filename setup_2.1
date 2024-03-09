@@ -1,0 +1,113 @@
+SETUP FOR 2.1 V1 DISPLAYS
+Check the sticker / number on the back of your 4.2" waveshare display.
+
+Requirements:
+- Pi Zero 2W
+- Micro SD Card (faster is better, in theory)
+- Waveshare 4.2" Rev 2.1 wired into the Pi Zero 2W (refer to https://www.waveshare.com/wiki/4.2inch_e-Paper_Module_Manual pinouts)
+- Power for your Pi Zero
+
+1. Run The Raspberry Pi Imager
+
+https://www.raspberrypi.com/software/
+
+- Download and run the raspberry pi imager. This tool just formats your SD card to create the computer that runs the typewriter.
+- Use Debian Bookworm Lite 32bit. The pi zero2w is VERY constrained for memory. You may have reliability issues with the display driver if you use a desktop OS or 64bit OS.
+- Use the gear icon to add extra settings to your install: 
+- Add your WIFI credentials. Set a hostname (zerowriter.local suggested) and username/password (zero/whateveryouwant) which will be used for connecting
+- Enable SSH. This is required so you can configure the typewriter remotely, without a traditional display.
+- Run the tool and it will wipe the SD card and install the image.
+
+2. Estabilish SSH connection
+
+- Install the SD card to the Pi, and connect to power. You should see blinking lights as it completes the first boot.
+- After a minute or so, open up Windows Power Shell or Terminal or whatever command line tool you want to use
+- Connect to your pi zero via: 
+- ssh zero@zerowriter.local
+- Your computer will connect to the pi zero and do some security stuff -- if you have errors here, there's usually an easy fix if you google it.
+- You will connect and be greeted with the pi zero's command line, woohoo, you are in the matrix.
+
+3. Configure Via SSH
+
+> Follow these commands in order to set up the pi zero with the stuff it needs to run the typewriter:
+
+sudo apt update
+sudo apt full-upgrade
+
+> and then (can copy paste these if easier):
+
+sudo apt install pip
+sudo apt-get install python3-pil
+sudo apt-get install python3-numpy
+sudo pip3 install keyboard
+sudo pip3 install yagmail
+sudo pip3 install qrcode
+
+> note: "if you get externally managed error:" sudo pip3 install keyboard --break-system-packages
+
+sudo raspi-config
+> (enable SPI via sudo raspi-config -> interface so your display will run)
+> (system options -> boot auto login -> console autologin) -- this is to help autostart things later
+
+> Clone the code from github to your pi so you can run the typewriter:
+
+sudo apt install git
+git clone -b main_full https://github.com/zerowriter/zerowriter1.git
+
+> Navigate to the typewriter's directory and run it:
+
+cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples
+sudo python main.py
+
+> Make sure the typewriter runs before you keep going. If you run into weirdness, you can reboot via the command: sudo reboot now
+> If you followed these steps, and you connected the display correctly, you should be running the sooftware now!
+
+3.1: Network Troubleshooting
+
+> If you do not see Wifi networks in the menu, it means that your pi hasn't initialized the controller yet.
+sudo systemctl enable NetworkManager 
+> should fix it. But note this will kill your SSH connection and you may need to connect to a display to get to the command line again.
+
+4. Configure bashrc (do this after you get the typewriter running correctly from command line) (seriously, don't do this until you are sure the application works)
+
+> Bashrc gets your pi zero to run stuff on boot up. 
+sudo nano nano ~/.bashrc
+> scroll to the bottom and add the lines: 
+cd zerowriter1/e-Paper/RaspberryPi_JetsonNano/python/examples/
+sudo python main.py
+> CTRL + O to save (write out) the file, CTRL + X to exit.
+sudo reboot now
+> it should boot to the typewriter automatically now.
+
+
+--------
+Optional Steps Below
+--------
+
+5. (Optional) Overclock your pi zero
+
+You can adjust your Pi Zero's settings to get better theoretical performance at the cost of power consumption.
+
+> at command line, type:
+sudo nano /boot/config.txt
+> checkout youtube or google for pi zero 2w overclocking suggestions
+> overclocking can affect system stability, if you run into problems, you may be unable to boot. If that happens, take the SD card out and insert into your computer, edit the boot/config.txt file back to lower values.
+> if you overclocked too far, your system stability might drop and you will get unresponsiveness or services failure (wifi for example) and sometimes display corruption or memory issues
+
+6. (Optional) Install SMB for file access (recomended if you are developing / building on the python code)
+
+> If you want to easily access and manage your files from another computer, you should install SMB to your pi.
+> https://pimylifeup.com/raspberry-pi-samba/
+
+-----
+FAQ / COMMON TROUBLESHOOTING
+-----
+
+Q: The zerowriter application starts, but I don't see anything / screen is blank.
+A: Check your wiring. Double check it. Triple check it. Run the waveshare demo code and make sure that works correctly. If the waveshare demo code works, the zerowriter should have no problem.
+
+Q: The screen is upside down, distorted, tilted, italicized, or generally weird... help?
+A: When the display fails initialization, it does some weird stuff. Try CTRL+R to force a refresh. If the problem persists, try rebooting the device. Make sure you are running a 32-bit lite OS. Memory issues, like memory leaks or other competing applications, can cause the display to act strangely.
+
+Q: Seriously, the screen is being mega weird.
+A: Multiple instances of the program running at once cause very weird things to happen. Make sure you don't have multiple zerowriter programs trying to use the same display -- this could be unclosed terminal sessions, for example.
