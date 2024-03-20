@@ -9,6 +9,8 @@ Components list: https://github.com/zerowriter/zerowriter1/blob/main/componentsl
 
 Setup: https://github.com/zerowriter/zerowriter1/blob/waveshare_2.2/setup_2.2
 
+NOTE: There is a known bug which may cause your pi zero to lose wifi connection after the first boot / setup. In this case, you need to connect your pi to HDMI and reconfigure wifi in sudo raspi-config and then you will be good to go again. This only needs to be done once. This bug is because of the network controller in the zerowriter software which lets you join wifi networks (like a regular computer).
+
 ----------
 This branch merges jacobsmith's update with the fixed driver for the rev 2.2 waveshare display. This branch does not yet support the rev 2.1 (original) display.
 
