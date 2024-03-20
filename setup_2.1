@@ -62,11 +62,15 @@ sudo python main.py
 > Make sure the typewriter runs before you keep going. If you run into weirdness, you can reboot via the command: sudo reboot now
 > If you followed these steps, and you connected the display correctly, you should be running the sooftware now!
 
-3.1: Network Troubleshooting
+3.1: Hey! I lost connectivity / screen is frozen but i see text / things stopped working here:
+
+There is a known bug which may cause your pi zero to lose wifi connection after the first boot / setup. In this case, you need to connect your pi to HDMI and reconfigure wifi in sudo raspi-config and then you will be good to go again. This only needs to be done once. This bug is because of the network controller in the zerowriter software which lets you join wifi networks (like a regular computer).
+
+3.2: Network Troubleshooting
 
 > If you do not see Wifi networks in the menu, it means that your pi hasn't initialized the controller yet.
 sudo systemctl enable NetworkManager 
-> should fix it. But note this will kill your SSH connection and you may need to connect to a display to get to the command line again.
+> should fix it. But note this will kill your SSH connection and you may need to connect to a display to get to the command line again. (see above)
 
 4. Configure bashrc (do this after you get the typewriter running correctly from command line) (seriously, don't do this until you are sure the application works)
 
