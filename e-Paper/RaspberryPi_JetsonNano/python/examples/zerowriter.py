@@ -343,12 +343,15 @@ class ZeroWriter:
             print(stdout)
             print(stderr)
             if b'Error' in stderr:
-                print("NetworkManager not running. Enabling.")
+                print("NetworkManager not running.")
+                print("If you want network management, run: sudo systemctl enable NetworkManager")
+                print("This will require you to reconfigure network in raspi-config.")
+                print("You'll need a HDMI cable, since SSH won't work.")
                 # Enable NetworkManager
-                subprocess.run(['sudo', 'systemctl', 'enable', 'NetworkManager'])
-                time.sleep(1)
-                subprocess.run(['sudo', 'systemctl', 'start', 'NetworkManager'])
-                time.sleep(1)
+                # subprocess.run(['sudo', 'systemctl', 'enable', 'NetworkManager'])
+                # time.sleep(1)
+                # subprocess.run(['sudo', 'systemctl', 'start', 'NetworkManager'])
+                # time.sleep(1)
             else:
                 print("NetworkManager is enabled.")
         except subprocess.TimeoutExpired:
