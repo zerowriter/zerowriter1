@@ -193,7 +193,7 @@ class ZeroWriter:
         # check_nmcli will run and try to set up the pi for networking related
         # stuff for wifi management. comment this line out if you have issues with
         # networking.
-        self.check_nmcli()
+        # self.check_nmcli()
 
 
     def get_ssid(self):
