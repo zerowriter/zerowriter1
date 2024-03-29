@@ -159,8 +159,8 @@ class ZeroWriter:
         self.last_display_update = time.time()
 
         #comment these two lines if you want to keep terminal interupts
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
-        signal.signal(signal.SIGTSTP, signal.SIG_IGN)
+        #signal.signal(signal.SIGINT, signal.SIG_IGN)
+        #signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
         self.start_server()
 
@@ -183,7 +183,7 @@ class ZeroWriter:
         time.sleep(.25)
         self.epd.init()
         self.epd.Clear()
-        self.check_nmcli()
+        #self.check_nmcli()
 
 
     def get_ssid(self):
