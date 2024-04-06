@@ -1,6 +1,8 @@
 # zerowriter
 
 ----------
+Interest form / survey for potential future products: https://forms.gle/8dZwQsYdUa9X49WCA 
+----------
 
 Yo! Check the back of your 4.2" waveshare e-Paper. If it says Rev2.2 or has a V2 sticker, you'll want to use this branch: 
 
