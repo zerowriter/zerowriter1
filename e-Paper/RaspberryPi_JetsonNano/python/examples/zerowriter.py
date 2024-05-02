@@ -548,6 +548,13 @@ class ZeroWriter:
             self.input_content = self.input_content[:self.cursor_position - 1] + self.input_content[self.cursor_position:]
             self.cursor_position -= 1  # Move the cursor back
             #self.needs_input_update = True
+        #No characters on the line, move up to previous line
+        elif len(self.previous_lines) > 0:
+            self.input_content = ""
+            self.input_content = self.previous_lines[len(self.previous_lines)-1]
+            self.previous_lines.pop(len(self.previous_lines)-1)
+            self.cursor_position = len(self.input_content)
+            self.needs_display_update = True
 
     def handle_key_down(self, e):
         if e.name == 'shift': #if shift is released
@@ -637,7 +644,7 @@ class ZeroWriter:
         if e.name == "esc":
             self.show_menu()
 
-        if e.name== "down" or e.name== "right" and display_updating==False:
+        if e.name== "down" or e.name== "right" and self.display_updating==False:
           self.scrollindex = self.scrollindex - 1
           if self.scrollindex < 1:
                 self.scrollindex = 1
@@ -646,7 +653,7 @@ class ZeroWriter:
           time.sleep(delay)
           
 
-        if e.name== "up" or e.name== "left" and display_updating==False:
+        if e.name== "up" or e.name== "left" and self.display_updating==False:
           self.scrollindex = self.scrollindex + 1
           if self.scrollindex > round(len(self.previous_lines)/self.lines_on_screen+1):
                 self.scrollindex = round(len(self.previous_lines)/self.lines_on_screen+1)

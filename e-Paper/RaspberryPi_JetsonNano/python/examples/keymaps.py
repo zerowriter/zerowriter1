@@ -1,6 +1,7 @@
 # keymaps
 
 # Mapping of characters when Shift is active
+# Note: hyphen is weird, there are at least three different hyphen characters
 shift_mapping = {
     '1': '!',
     '2': '@',
@@ -12,7 +13,9 @@ shift_mapping = {
     '8': '*',
     '9': '(',
     '0': ')',
-    '-': '_',
+    chr(45): '_',
+    chr(8208): '_',
+    chr(8722): '_',
     '=': '+',
     '`': '~',
     'q': 'Q',
@@ -46,4 +49,7 @@ shift_mapping = {
     ',': '<',
     '.': '>',
     '/': '?',
+    '[':'{',
+    ']':'}',
+    '\\':'|',
 }
