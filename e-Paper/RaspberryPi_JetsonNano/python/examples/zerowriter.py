@@ -150,7 +150,8 @@ class ZeroWriter:
         self.parent_menu = None # used to store the menu that was open before the load menu was opened
         self.server_address = "not active"
         self.cache_file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
-    
+        self.doReset = False
+
     def initialize(self):
         self.epd.init()
         self.epd.Clear()
@@ -556,6 +557,17 @@ class ZeroWriter:
             self.cursor_position = len(self.input_content)
             self.needs_display_update = True
 
+    def delete_previous_word(self):
+        #find the location of the last word in the line
+        last_space = self.input_content.rstrip().rfind(' ', 0, self.chars_per_line)
+        sentence = ""
+        #Remove previous word
+        if last_space >= 0:
+            sentence = self.input_content[:last_space+1]
+        self.input_content = sentence
+        self.cursor_position = len(self.input_content) 
+        #self.needs_display_update = True
+                
     def handle_key_up(self, e): 
         if e.name == 'ctrl': #if control is released
             self.control_active = False 
@@ -569,6 +581,7 @@ class ZeroWriter:
         filename = os.path.join(os.path.dirname(__file__), 'data', f'{timestamp}_{alphanum_prefix}.txt')
         self.previous_lines.append(self.input_content)
         self.save_previous_lines(filename, self.previous_lines)
+        self.save_previous_lines(self.cache_file_path, self.previous_lines)
         self.input_content = self.previous_lines.pop(len(self.previous_lines)-1)
         self.consolemsg("[Saved]")
 
@@ -673,10 +686,10 @@ class ZeroWriter:
         if e.name == "g" and self.control_active: #ctrl+g gmail
             self.gmail_send()
         if e.name == "r" and self.control_active: #ctrl+r slow refresh
-            self.epd.init()
-            self.epd.Clear()
-            self.update_display()
-            
+            self.doReset = True
+        if e.name == "backspace" and self.control_active: #ctrl+backspace delete prev word
+            self.delete_previous_word()
+
         if e.name == "tab": 
             self.insert_character(" ")
             self.insert_character(" ")
@@ -771,6 +784,12 @@ class ZeroWriter:
       exit(0)
       
     def loop(self):
+        if self.doReset:
+            self.epd.init()
+            self.epd.Clear()
+            self.update_display()
+            self.doReset = False
+
         if self.menu.inputMode and not self.menu.screenupdating:
             self.menu.partial_update()
         
@@ -788,3 +807,6 @@ class ZeroWriter:
         self.load_file_into_previous_lines("cache.txt")
         while True:
             self.loop()
+            # This small sleep prevents zerowriter from consuming 100% cpu
+            # This does not negatively affect input delay
+            time.sleep(0.01)
