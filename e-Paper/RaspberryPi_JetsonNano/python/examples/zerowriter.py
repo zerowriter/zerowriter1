@@ -150,7 +150,8 @@ class ZeroWriter:
         self.parent_menu = None # used to store the menu that was open before the load menu was opened
         self.server_address = "not active"
         self.cache_file_path = os.path.join(os.path.dirname(__file__), 'data', 'cache.txt')
-    
+        self.doReset = False
+
     def initialize(self):
         self.epd.init()
         self.epd.Clear()
@@ -164,8 +165,8 @@ class ZeroWriter:
 
         self.start_server()
 
-        self.keyboard.on_press(self.handle_key_down, suppress=True) #handles modifiers and shortcuts
-        self.keyboard.on_release(self.handle_key_press, suppress=True)
+        self.keyboard.on_press(self.handle_key_press, suppress=True) #handles modifiers and shortcuts
+        self.keyboard.on_release(self.handle_key_up, suppress=True)
 
         self.menu = Menu(self.display_draw, self.epd, self.display_image)
         self.populate_main_menu()
@@ -548,19 +549,40 @@ class ZeroWriter:
             self.input_content = self.input_content[:self.cursor_position - 1] + self.input_content[self.cursor_position:]
             self.cursor_position -= 1  # Move the cursor back
             #self.needs_input_update = True
+        #No characters on the line, move up to previous line
+        elif len(self.previous_lines) > 0:
+            self.input_content = ""
+            self.input_content = self.previous_lines[len(self.previous_lines)-1]
+            self.previous_lines.pop(len(self.previous_lines)-1)
+            self.cursor_position = len(self.input_content)
+            self.needs_display_update = True
 
-    def handle_key_down(self, e):
+    def delete_previous_word(self):
+        #find the location of the last word in the line
+        last_space = self.input_content.rstrip().rfind(' ', 0, self.chars_per_line)
+        sentence = ""
+        #Remove previous word
+        if last_space >= 0:
+            sentence = self.input_content[:last_space+1]
+        self.input_content = sentence
+        self.cursor_position = len(self.input_content) 
+        #self.needs_display_update = True
+                
+    def handle_key_up(self, e): 
+        if e.name == 'ctrl': #if control is released
+            self.control_active = False 
         if e.name == 'shift': #if shift is released
-            self.shift_active = True
-        if e.name == 'ctrl': #if ctrl is released
-            self.control_active = True
+            self.shift_active = False
 
     def save_file(self):
         timestamp = time.strftime("%m%d")  # Format: MMDD
         prefix = ''.join(self.previous_lines)[:20]
         alphanum_prefix = ''.join(ch for ch in prefix if ch.isalnum())
         filename = os.path.join(os.path.dirname(__file__), 'data', f'{timestamp}_{alphanum_prefix}.txt')
+        self.previous_lines.append(self.input_content)
         self.save_previous_lines(filename, self.previous_lines)
+        self.save_previous_lines(self.cache_file_path, self.previous_lines)
+        self.input_content = self.previous_lines.pop(len(self.previous_lines)-1)
         self.consolemsg("[Saved]")
 
     def save_as_file(self, userinput):
@@ -591,11 +613,10 @@ class ZeroWriter:
 
 
     def handle_key_press(self, e):
-        
-        if e.name == 'ctrl': #if control is released
-            self.control_active = False 
-        if e.name == 'shift': #if shift is released
-            self.shift_active = False
+        if e.name == 'ctrl': #if control is pressed
+            self.control_active = True
+        if e.name == 'shift': #if shift is pressed
+            self.shift_active = True
 
         if self.menu.inputMode:
             if len(e.name)==1:
@@ -637,7 +658,7 @@ class ZeroWriter:
         if e.name == "esc":
             self.show_menu()
 
-        if e.name== "down" or e.name== "right" and display_updating==False:
+        if e.name== "down" or e.name== "right" and self.display_updating==False:
           self.scrollindex = self.scrollindex - 1
           if self.scrollindex < 1:
                 self.scrollindex = 1
@@ -646,7 +667,7 @@ class ZeroWriter:
           time.sleep(delay)
           
 
-        if e.name== "up" or e.name== "left" and display_updating==False:
+        if e.name== "up" or e.name== "left" and self.display_updating==False:
           self.scrollindex = self.scrollindex + 1
           if self.scrollindex > round(len(self.previous_lines)/self.lines_on_screen+1):
                 self.scrollindex = round(len(self.previous_lines)/self.lines_on_screen+1)
@@ -665,10 +686,10 @@ class ZeroWriter:
         if e.name == "g" and self.control_active: #ctrl+g gmail
             self.gmail_send()
         if e.name == "r" and self.control_active: #ctrl+r slow refresh
-            self.epd.init()
-            self.epd.Clear()
-            self.update_display()
-            
+            self.doReset = True
+        if e.name == "backspace" and self.control_active: #ctrl+backspace delete prev word
+            self.delete_previous_word()
+
         if e.name == "tab": 
             self.insert_character(" ")
             self.insert_character(" ")
@@ -729,14 +750,21 @@ class ZeroWriter:
             if self.cursor_position > self.chars_per_line:
                 # Find the last space character before the line length limit
                 last_space = self.input_content.rfind(' ', 0, self.chars_per_line)
-                sentence = self.input_content[:last_space]
-                # Append the sentence to the previous lines
-                self.previous_lines.append(sentence)                
+                if last_space >= 0:
+                    sentence = self.input_content[:last_space]
+                    # Append the sentence to the previous lines
+                    self.previous_lines.append(sentence)
 
-                # Update input_content to contain the remaining characters
-                self.input_content = self.input_content[last_space + 1:]
-                self.needs_display_update=True
-                
+                    # Update input_content to contain the remaining characters
+                    self.input_content = self.input_content[last_space + 1:]
+                    self.needs_display_update=True
+                else:
+                    #There are no spaces in this line so input should move to next line
+                    self.previous_lines.append(self.input_content[0:self.chars_per_line])
+                    temp = self.input_content[-1]
+                    self.input_content = temp
+                    self.needs_display_update=True
+
             # Update cursor_position to the length of the remaining input_content
             self.cursor_position = len(self.input_content)                
             
@@ -756,6 +784,12 @@ class ZeroWriter:
       exit(0)
       
     def loop(self):
+        if self.doReset:
+            self.epd.init()
+            self.epd.Clear()
+            self.update_display()
+            self.doReset = False
+
         if self.menu.inputMode and not self.menu.screenupdating:
             self.menu.partial_update()
         
@@ -773,3 +807,6 @@ class ZeroWriter:
         self.load_file_into_previous_lines("cache.txt")
         while True:
             self.loop()
+            # This small sleep prevents zerowriter from consuming 100% cpu
+            # This does not negatively affect input delay
+            time.sleep(0.01)
