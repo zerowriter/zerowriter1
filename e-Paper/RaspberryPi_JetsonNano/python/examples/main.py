@@ -38,7 +38,7 @@ from IT8951.display import AutoEPDDisplay
 
 # Waveshare 10.3in display: 1872, 1404
 
-display_image = Image.new('1', (1872, 1404), 255)
+display_image = Image.new('L', (1872, 1404), 255)
 display_draw = ImageDraw.Draw(display_image)
 
 
@@ -56,7 +56,7 @@ display.epd.wait_display_ready()
 
 #Display settings like font size, spacing, etc.
 display_start_line = 0
-font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 36) #24
+font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24) #24
 textWidth=16
 linespacing = 22
 chars_per_line = 32 #28
@@ -119,8 +119,10 @@ def update_display():
     global current_line
     global scrollindex
     
+    print("Entered update_display")
+    
     # Clear the main display area -- also clears input line (270-300)
-    #display_draw.rectangle((0, 0, 400, 300), fill=255) # Why? Commenting out for now
+    display_draw.rectangle((0, 0, 400, 300), fill=255) # Why? Commenting out for now
     
     # Display the previous lines
     y_position = 270 - linespacing  # leaves room for cursor input
@@ -131,13 +133,13 @@ def update_display():
     #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
     for line in reversed(temp[-lines_on_screen:]):
-       display_draw.text((10, y_position), line[:max_chars_per_line], font=font, fill=0)
+       display_draw.text((10, y_position), line[:max_chars_per_line], font=font)
        y_position -= linespacing
 
     #Display Console Message
     if console_message != "":
         display_draw.rectangle((300, 270, 400, 300), fill=255)
-        display_draw.text((300, 270), console_message, font=font, fill=0)
+        display_draw.text((300, 270), console_message, font=font)
         console_message = ""
     
     #generate display buffer for display
@@ -160,9 +162,11 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     global cursor_index
     global needs_input_update
     global updating_input_area
+    
+    print("Entered update_input_area")
 
     cursor_index = cursor_position
-    #display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
+    display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
     
     #add cursor
     temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
@@ -390,7 +394,7 @@ def handle_interrupt(signal, frame):
     keyboard.unhook_all()
     #epd.init()
     #epd.Clear()
-    display_draw.clear()
+    display.clear()
     exit(0)
 
 #Startup Stuff ---
