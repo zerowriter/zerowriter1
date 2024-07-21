@@ -122,11 +122,11 @@ def update_display():
     
     # Clear the main display area -- also clears input line (270-300)
     
-    display_draw.rectangle((0, 0, 400, 300), fill=255) # Why? Commenting out for now
+    display_draw.rectangle((0, 0, 1872, 1404), fill=255) # Why? Commenting out for now
     print("1")
     
     # Display the previous lines
-    y_position = 270 - linespacing  # leaves room for cursor input
+    y_position = 1364 - linespacing  # leaves room for cursor input
     print("2")
 
     #Make a temp array from previous_lines. And then reverse it and display as usual.
@@ -142,8 +142,8 @@ def update_display():
 
     #Display Console Message
     if console_message != "":
-        display_draw.rectangle((300, 270, 400, 300), fill=255)
-        display_draw.text((300, 270), console_message, font=font)
+        display_draw.rectangle((1404, 1364, 1872, 1404), fill=255)
+        display_draw.text((1404, 1364), console_message, font=font)
         console_message = ""
     print("5")
     #generate display buffer for display
@@ -171,7 +171,7 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     print("Entered update_input_area")
 
     cursor_index = cursor_position
-    display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
+    display_draw.rectangle((0, 1364, 1872, 1404), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
     
     print("7")
     #add cursor
@@ -179,7 +179,7 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     
     print("8")
     #draw input line text
-    display_draw.text((10, 270), str(temp_content), font=font, fill=0)
+    display_draw.text((10, 1364), str(temp_content), font=font, fill=0)
     
     print("9")
     #generate display buffer for input line
@@ -301,7 +301,7 @@ def handle_key_press(e):
     #powerdown - could add an autosleep if you want to save battery
     if e.name == "esc" and control_active: #ctrl+esc
         #run powerdown script
-        display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
+        display_draw.rectangle((0, 0, 1872, 1404), fill=255)  # Clear display
         display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font, fill=0)
         
         ##### NEW STUFF #####
