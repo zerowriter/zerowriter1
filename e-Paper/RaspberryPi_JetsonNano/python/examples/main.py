@@ -185,7 +185,10 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     print("9")
     #generate display buffer for input line
     updating_input_area = True
-    display.draw_partial(constants.DisplayModes.DU)
+    try:
+        display.draw_partial(constants.DisplayModes.DU)
+    except Exception as error:
+        print("Exception when running draw_partial in input area: ", error)
     print("10")
     #partial_buffer = epd.getbuffer(display_image)
     #epd.display(partial_buffer)
