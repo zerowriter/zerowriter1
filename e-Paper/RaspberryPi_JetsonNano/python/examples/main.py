@@ -413,9 +413,11 @@ def handle_interrupt(signal, frame):
     exit(0)
 
 #Startup Stuff ---
+print("is this running?")
 keyboard.on_press(handle_key_down, suppress=False) #handles modifiers and shortcuts
 keyboard.on_release(handle_key_press, suppress=True)
 signal.signal(signal.SIGINT, handle_interrupt)
+print("is this running?22")
 
 #init_display routine
 #epd.init()
