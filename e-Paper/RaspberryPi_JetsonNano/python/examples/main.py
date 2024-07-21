@@ -38,10 +38,6 @@ from IT8951.display import AutoEPDDisplay
 
 # Waveshare 10.3in display: 1872, 1404
 
-display_image = Image.new('L', (1872, 1404), 255)
-display_draw = ImageDraw.Draw(display_image)
-
-
 print("INITIALIZING DISPLAY")
 
 display = AutoEPDDisplay(vcom=-1.50)
@@ -53,6 +49,9 @@ display._set_rotate('flip', True)
 # so that we're not timing the previous operations
 display.epd.wait_display_ready()
     
+display_image = display.frame_buf #Image.new('L', (1872, 1404), 255)
+display_draw = ImageDraw.Draw(display_image)
+
 
 #Display settings like font size, spacing, etc.
 display_start_line = 0
