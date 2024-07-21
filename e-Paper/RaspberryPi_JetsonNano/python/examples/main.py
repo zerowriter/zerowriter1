@@ -388,8 +388,9 @@ def handle_key_press(e):
     
 def handle_interrupt(signal, frame):
     keyboard.unhook_all()
-    epd.init()
-    epd.Clear()
+    #epd.init()
+    #epd.Clear()
+    display_draw.clear()
     exit(0)
 
 #Startup Stuff ---
