@@ -122,32 +122,38 @@ def update_display():
     print("Entered update_display")
     
     # Clear the main display area -- also clears input line (270-300)
+    
     display_draw.rectangle((0, 0, 400, 300), fill=255) # Why? Commenting out for now
+    print("1")
     
     # Display the previous lines
     y_position = 270 - linespacing  # leaves room for cursor input
+    print("2")
 
     #Make a temp array from previous_lines. And then reverse it and display as usual.
     current_line=max(0,len(previous_lines)-lines_on_screen*scrollindex)
     temp=previous_lines[current_line:current_line+lines_on_screen]
-    #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
+    print("3")
+    print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
     for line in reversed(temp[-lines_on_screen:]):
        display_draw.text((10, y_position), line[:max_chars_per_line], font=font)
        y_position -= linespacing
+    print("4")
 
     #Display Console Message
     if console_message != "":
         display_draw.rectangle((300, 270, 400, 300), fill=255)
         display_draw.text((300, 270), console_message, font=font)
         console_message = ""
-    
+    print("5")
     #generate display buffer for display
     
     ##### NEW STUFF #####
     
     #display_draw.text((x,y), line[:max_chars_per_line], font=font)
     display.draw_partial(constants.DisplayModes.DU)
+    print("6")
     #partial_buffer = epd.getbuffer(display_image)
     #epd.display(partial_buffer)
 
@@ -168,15 +174,19 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     cursor_index = cursor_position
     display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
     
+    print("7")
     #add cursor
     temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
     
+    print("8")
     #draw input line text
     display_draw.text((10, 270), str(temp_content), font=font, fill=0)
     
+    print("9")
     #generate display buffer for input line
     updating_input_area = True
     display.draw_partial(constants.DisplayModes.DU)
+    print("10")
     #partial_buffer = epd.getbuffer(display_image)
     #epd.display(partial_buffer)
     updating_input_area = False
