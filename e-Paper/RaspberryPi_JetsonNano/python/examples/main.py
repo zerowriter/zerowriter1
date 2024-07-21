@@ -248,6 +248,8 @@ def handle_key_press(e):
     global console_message
     global scrollindex
     
+    print("entered handle key press")
+    
     #save via ctrl + s
     if e.name== "s" and control_active:
         timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
@@ -374,7 +376,7 @@ def handle_key_press(e):
         shift_active = False
 
     elif len(e.name) == 1 and control_active == False:  # letter and number input
-        
+        print("handle letters and numbers")
         if shift_active:
             char = keymaps.shift_mapping.get(e.name)
             input_content += char
