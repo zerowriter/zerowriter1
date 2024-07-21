@@ -58,8 +58,8 @@ display_start_line = 0
 font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24) #24
 textWidth=16
 linespacing = 22
-chars_per_line = 32 #28
-lines_on_screen = 12
+chars_per_line = 128 #28
+lines_on_screen = 45
 last_display_update = time.time()
 
 #display related
