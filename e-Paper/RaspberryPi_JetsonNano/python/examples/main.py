@@ -144,7 +144,7 @@ def update_display():
     
     ##### NEW STUFF #####
     
-    display_draw.text((x,y), line[:max_chars_per_line], font=font)
+    #display_draw.text((x,y), line[:max_chars_per_line], font=font)
     display.draw_partial(constants.DisplayModes.DU)
     #partial_buffer = epd.getbuffer(display_image)
     #epd.display(partial_buffer)
@@ -284,11 +284,10 @@ def handle_key_press(e):
     if e.name == "esc" and control_active: #ctrl+esc
         #run powerdown script
         display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
-        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
+        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font, fill=0)
         
         ##### NEW STUFF #####
     
-        display_draw.text((x,y), line[:max_chars_per_line], font=font)
         display.draw_partial(constants.DisplayModes.DU)
         #partial_buffer = epd.getbuffer(display_image)
         #epd.display(partial_buffer)
