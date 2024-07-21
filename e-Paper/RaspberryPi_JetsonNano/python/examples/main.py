@@ -25,20 +25,38 @@ import signal
 import os
 from pathlib import Path
 
+from IT8951 import constants
+from IT8951.display import AutoEPDDisplay
 
 # Initialize the e-Paper display
 # clear refreshes whole screen, should be done on slow init()
-epd = new4in2part.EPD()
-epd.init()
-epd.Clear()
+#epd = new4in2part.EPD()
+#epd.init()
+#epd.Clear()
 
 #Initialize display-related variables)
-display_image = Image.new('1', (epd.width,epd.height), 255)
+
+# Waveshare 10.3in display: 1872, 1404
+
+display_image = Image.new('1', (1872, 1404), 255)
 display_draw = ImageDraw.Draw(display_image)
+
+
+print("INITIALIZING DISPLAY")
+
+display = AutoEPDDisplay(vcom=-1.50)
+
+display.clear()
+
+display._set_rotate('flip', True)
+
+# so that we're not timing the previous operations
+display.epd.wait_display_ready()
+    
 
 #Display settings like font size, spacing, etc.
 display_start_line = 0
-font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
+font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 36) #24
 textWidth=16
 linespacing = 22
 chars_per_line = 32 #28
@@ -102,7 +120,7 @@ def update_display():
     global scrollindex
     
     # Clear the main display area -- also clears input line (270-300)
-    display_draw.rectangle((0, 0, 400, 300), fill=255)
+    #display_draw.rectangle((0, 0, 400, 300), fill=255) # Why? Commenting out for now
     
     # Display the previous lines
     y_position = 270 - linespacing  # leaves room for cursor input
@@ -113,18 +131,23 @@ def update_display():
     #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
     for line in reversed(temp[-lines_on_screen:]):
-       display_draw.text((10, y_position), line[:max_chars_per_line], font=font24, fill=0)
+       display_draw.text((10, y_position), line[:max_chars_per_line], font=font, fill=0)
        y_position -= linespacing
 
     #Display Console Message
     if console_message != "":
         display_draw.rectangle((300, 270, 400, 300), fill=255)
-        display_draw.text((300, 270), console_message, font=font24, fill=0)
+        display_draw.text((300, 270), console_message, font=font, fill=0)
         console_message = ""
     
     #generate display buffer for display
-    partial_buffer = epd.getbuffer(display_image)
-    epd.display(partial_buffer)
+    
+    ##### NEW STUFF #####
+    
+    display_draw.text((x,y), line[:max_chars_per_line], font=font)
+    display.draw_partial(constants.DisplayModes.DU)
+    #partial_buffer = epd.getbuffer(display_image)
+    #epd.display(partial_buffer)
 
     last_display_update = time.time()
     display_catchup = True
@@ -139,18 +162,19 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     global updating_input_area
 
     cursor_index = cursor_position
-    display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display
+    #display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
     
     #add cursor
     temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
     
     #draw input line text
-    display_draw.text((10, 270), str(temp_content), font=font24, fill=0)
+    display_draw.text((10, 270), str(temp_content), font=font, fill=0)
     
     #generate display buffer for input line
     updating_input_area = True
-    partial_buffer = epd.getbuffer(display_image)
-    epd.display(partial_buffer)
+    display.draw_partial(constants.DisplayModes.DU)
+    #partial_buffer = epd.getbuffer(display_image)
+    #epd.display(partial_buffer)
     updating_input_area = False
     
 def insert_character(character):
@@ -261,8 +285,13 @@ def handle_key_press(e):
         #run powerdown script
         display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
         display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
-        partial_buffer = epd.getbuffer(display_image)
-        epd.display(partial_buffer)
+        
+        ##### NEW STUFF #####
+    
+        display_draw.text((x,y), line[:max_chars_per_line], font=font)
+        display.draw_partial(constants.DisplayModes.DU)
+        #partial_buffer = epd.getbuffer(display_image)
+        #epd.display(partial_buffer)
         time.sleep(3)
         subprocess.run(['sudo', 'poweroff', '-f'])
         
@@ -370,11 +399,11 @@ keyboard.on_release(handle_key_press, suppress=True)
 signal.signal(signal.SIGINT, handle_interrupt)
 
 #init_display routine
-epd.init()
-epd.Clear
+#epd.init()
+#epd.Clear
 previous_lines = load_previous_lines(file_path)#('previous_lines.txt')
-epd.init_Partial()
-epd.Clear
+#epd.init_Partial()
+#epd.Clear
 needs_display_update = True
 needs_input_update = False
 
@@ -402,7 +431,7 @@ except KeyboardInterrupt:
 
 finally:
     keyboard.unhook_all()
-    epd.init()
+    #epd.init()
     time.sleep(1)
-    epd.Clear()
-    epd.sleep()
+    #epd.Clear()
+    #epd.sleep()
