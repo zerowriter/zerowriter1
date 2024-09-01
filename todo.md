@@ -6,3 +6,7 @@
     1. Figure out why menu doesn't display all items at once
     2. Make menu font larger
 4. Add Google Drive integration
+5. Investigate Folder Support
+   1. Would need to work similar to linux folder system. Might be a bit complex
+6. Add random image when powered off
+7. Add battery life percentage indicator
