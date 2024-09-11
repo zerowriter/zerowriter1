@@ -2,7 +2,7 @@
 
 ----------
 
-Zerowriter Ink is now available: https://www.crowdsupply.com/zerowriter/zerowriter-ink
+Zerowriter Ink (all-in-one device) is now available: https://www.crowdsupply.com/zerowriter/zerowriter-ink
 
 Interest form / survey for potential future products: https://forms.gle/8dZwQsYdUa9X49WCA 
 ----------
