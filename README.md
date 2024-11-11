@@ -1,6 +1,6 @@
-This branch is experimental and only works with rev2.2 waveshare displays. You can check the back of your display for a rev number.
+important update: raspberry pi OS has changed GPIO support, so it is important you use archived versions of the OS: https://github.com/zerowriter/zerowriter1/issues/26#issuecomment-2466903737
 
-Waveshare no longer manufactures rev2.1 displays.
+THIS BRANCH IS FOR REV 2.2 DISPLAYS.
 
 # zerowriter
 
