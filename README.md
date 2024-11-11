@@ -1,5 +1,7 @@
 # zerowriter
 
+important update: raspberry pi OS has changed GPIO support, so it is important you use archived versions of the OS: https://github.com/zerowriter/zerowriter1/issues/26#issuecomment-2466903737
+
 ----------
 
 Zerowriter Ink (all-in-one device) is now available: https://www.crowdsupply.com/zerowriter/zerowriter-ink
