@@ -25,24 +25,41 @@ import signal
 import os
 from pathlib import Path
 
+from IT8951 import constants
+from IT8951.display import AutoEPDDisplay
 
 # Initialize the e-Paper display
 # clear refreshes whole screen, should be done on slow init()
-epd = new4in2part.EPD()
-epd.init()
-epd.Clear()
+#epd = new4in2part.EPD()
+#epd.init()
+#epd.Clear()
 
 #Initialize display-related variables)
-display_image = Image.new('1', (epd.width,epd.height), 255)
+
+# Waveshare 10.3in display: 1872, 1404
+
+print("INITIALIZING DISPLAY")
+
+display = AutoEPDDisplay(vcom=-1.50)
+
+display.clear()
+
+display._set_rotate('flip', True)
+
+# so that we're not timing the previous operations
+display.epd.wait_display_ready()
+    
+display_image = display.frame_buf #Image.new('L', (1872, 1404), 255)
 display_draw = ImageDraw.Draw(display_image)
+
 
 #Display settings like font size, spacing, etc.
 display_start_line = 0
-font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
+font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24) #24
 textWidth=16
 linespacing = 22
-chars_per_line = 32 #28
-lines_on_screen = 12
+chars_per_line = 128 #28
+lines_on_screen = 45
 last_display_update = time.time()
 
 #display related
@@ -101,30 +118,43 @@ def update_display():
     global current_line
     global scrollindex
     
+    print("Entered update_display")
+    
     # Clear the main display area -- also clears input line (270-300)
-    display_draw.rectangle((0, 0, 400, 300), fill=255)
+    
+    display_draw.rectangle((0, 0, 1872, 1404), fill=255) # Why? Commenting out for now
+    print("1")
     
     # Display the previous lines
-    y_position = 270 - linespacing  # leaves room for cursor input
+    y_position = 1364 - linespacing  # leaves room for cursor input
+    print("2")
 
     #Make a temp array from previous_lines. And then reverse it and display as usual.
     current_line=max(0,len(previous_lines)-lines_on_screen*scrollindex)
     temp=previous_lines[current_line:current_line+lines_on_screen]
-    #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
+    print("3")
+    print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
     for line in reversed(temp[-lines_on_screen:]):
-       display_draw.text((10, y_position), line[:max_chars_per_line], font=font24, fill=0)
+       display_draw.text((10, y_position), line[:max_chars_per_line], font=font)
        y_position -= linespacing
+    print("4")
 
     #Display Console Message
     if console_message != "":
-        display_draw.rectangle((300, 270, 400, 300), fill=255)
-        display_draw.text((300, 270), console_message, font=font24, fill=0)
+        display_draw.rectangle((1404, 1364, 1872, 1404), fill=255)
+        display_draw.text((1404, 1364), console_message, font=font)
         console_message = ""
-    
+    print("5")
     #generate display buffer for display
-    partial_buffer = epd.getbuffer(display_image)
-    epd.display(partial_buffer)
+    
+    ##### NEW STUFF #####
+    
+    #display_draw.text((x,y), line[:max_chars_per_line], font=font)
+    display.draw_partial(constants.DisplayModes.DU)
+    print("6")
+    #partial_buffer = epd.getbuffer(display_image)
+    #epd.display(partial_buffer)
 
     last_display_update = time.time()
     display_catchup = True
@@ -137,20 +167,30 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     global cursor_index
     global needs_input_update
     global updating_input_area
+    
+    print("Entered update_input_area")
 
     cursor_index = cursor_position
-    display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display
+    display_draw.rectangle((0, 1364, 1872, 1404), fill=255)  # Clear display | Why? Is this needed? COmmenting out for now
     
+    print("7")
     #add cursor
     temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
     
+    print("8")
     #draw input line text
-    display_draw.text((10, 270), str(temp_content), font=font24, fill=0)
+    display_draw.text((10, 1364), str(temp_content), font=font, fill=0)
     
+    print("9")
     #generate display buffer for input line
     updating_input_area = True
-    partial_buffer = epd.getbuffer(display_image)
-    epd.display(partial_buffer)
+    try:
+        display.draw_partial(constants.DisplayModes.DU)
+    except Exception as error:
+        print("Exception when running draw_partial in input area: ", error)
+    print("10")
+    #partial_buffer = epd.getbuffer(display_image)
+    #epd.display(partial_buffer)
     updating_input_area = False
     
 def insert_character(character):
@@ -207,6 +247,8 @@ def handle_key_press(e):
     global console_message
     global scrollindex
     
+    print("entered handle key press")
+    
     #save via ctrl + s
     if e.name== "s" and control_active:
         timestamp = time.strftime("%Y%m%d%H%M%S")  # Format: YYYYMMDDHHMMSS
@@ -259,10 +301,14 @@ def handle_key_press(e):
     #powerdown - could add an autosleep if you want to save battery
     if e.name == "esc" and control_active: #ctrl+esc
         #run powerdown script
-        display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
-        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
-        partial_buffer = epd.getbuffer(display_image)
-        epd.display(partial_buffer)
+        display_draw.rectangle((0, 0, 1872, 1404), fill=255)  # Clear display
+        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font, fill=0)
+        
+        ##### NEW STUFF #####
+    
+        display.draw_partial(constants.DisplayModes.DU)
+        #partial_buffer = epd.getbuffer(display_image)
+        #epd.display(partial_buffer)
         time.sleep(3)
         subprocess.run(['sudo', 'poweroff', '-f'])
         
@@ -329,7 +375,7 @@ def handle_key_press(e):
         shift_active = False
 
     elif len(e.name) == 1 and control_active == False:  # letter and number input
-        
+        print("handle letters and numbers")
         if shift_active:
             char = keymaps.shift_mapping.get(e.name)
             input_content += char
@@ -360,21 +406,24 @@ def handle_key_press(e):
     
 def handle_interrupt(signal, frame):
     keyboard.unhook_all()
-    epd.init()
-    epd.Clear()
+    #epd.init()
+    #epd.Clear()
+    display.clear()
     exit(0)
 
 #Startup Stuff ---
+print("is this running?")
 keyboard.on_press(handle_key_down, suppress=False) #handles modifiers and shortcuts
 keyboard.on_release(handle_key_press, suppress=True)
 signal.signal(signal.SIGINT, handle_interrupt)
+print("is this running?22")
 
 #init_display routine
-epd.init()
-epd.Clear
+#epd.init()
+#epd.Clear
 previous_lines = load_previous_lines(file_path)#('previous_lines.txt')
-epd.init_Partial()
-epd.Clear
+#epd.init_Partial()
+#epd.Clear
 needs_display_update = True
 needs_input_update = False
 
@@ -402,7 +451,7 @@ except KeyboardInterrupt:
 
 finally:
     keyboard.unhook_all()
-    epd.init()
+    #epd.init()
     time.sleep(1)
-    epd.Clear()
-    epd.sleep()
+    #epd.Clear()
+    #epd.sleep()
